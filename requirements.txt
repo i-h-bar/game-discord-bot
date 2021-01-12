@@ -1,5 +1,5 @@
 discord.py
 httpx
-git+https://github.com/Joe-P-W/mtg_discord_bot.git@develop
+git+https://github.com/Joe-P-W/mtg_discord_bot.git@master
 git+https://github.com/Joe-P-W/dnd_discord_bot.git@develop
 git+https://github.com/Joe-P-W/edge-of-empire-discord-bot.git@develop
