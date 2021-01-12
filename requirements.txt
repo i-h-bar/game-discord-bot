@@ -1,0 +1,3 @@
+discord.py
+httpx
+git+https://github.com/Joe-P-W/mtg_discord_bot.git@develop
