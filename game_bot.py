@@ -41,7 +41,5 @@ async def on_message(message):
     elif tracker.get(message.channel.id) is None:
         await message.channel.send(f"{message.author.mention} - You have not set your game")
 
-    print(tracker)
-
 
 bot.run(os.getenv("game_bot_token"))
