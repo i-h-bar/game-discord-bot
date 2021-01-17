@@ -1,6 +1,6 @@
 import re
-from typing import Union
 from operator import pow, truediv, mul, add, sub
+from typing import Union
 
 operators = {
     '+': add,
@@ -9,6 +9,12 @@ operators = {
     '/': truediv,
     '^': pow
 }
+
+
+async def calculate_from_message(message):
+    reply = f"{message.author.mention} `{message.content.replace(' ', '').replace('/c', '').strip()}` = "
+    reply += str(await calculate(message.content.replace("/c", "")))
+    return reply
 
 
 async def calculate(expression: str) -> Union[float, int, str]:

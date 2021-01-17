@@ -1,11 +1,10 @@
-import re
 import random
+import re
 
 from discord.message import Message
 
 
 async def flip_coin(message: Message):
-    channel = message.channel
     reply = f"{message.author.mention} "
 
     if "until" in message.content:
@@ -18,12 +17,12 @@ async def flip_coin(message: Message):
                 with_thumb = True
                 if loss_condition not in ["heads", "tails"]:
                     reply += "you need to choose 'heads' or 'tails' with 'flip until {}' command."
-                    await channel.send(reply)
+                    return reply
                 else:
                     loss_condition = loss_condition.split()[0], loss_condition.split()[0]
             else:
                 reply += "you need to choose 'heads' or 'tails' with 'flip until {}' command."
-                await channel.send(reply)
+                return reply
 
         wins = 0
         flip = random.choice(["heads", "tails"])
@@ -40,10 +39,9 @@ async def flip_coin(message: Message):
             reply += f"\n`{flip}`"
 
         reply += f"\n`wins = {wins}`"
-        await channel.send(reply)
+        return reply
 
     else:
-        channel = message.channel
         reply = f"{message.author.mention} "
 
         try:
@@ -54,4 +52,4 @@ async def flip_coin(message: Message):
         for _ in range(times):
             reply += f"\n`{random.choice(['heads', 'tails'])}`"
 
-        await channel.send(reply)
+        return reply

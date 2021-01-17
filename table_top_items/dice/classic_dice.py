@@ -1,13 +1,13 @@
-import re
 import random
+import re
 
 from discord.message import Message
-from table_top_items import calculate
+
+from table_top_items.calculator import calculate
 
 
 async def roll_dice(message: Message):
-    channel = message.channel
-    content = message.content.replace("/roll", "").replace("/r", "")
+    content = message.content
     expression = content
     reply = f"{message.author.mention} `{content.replace(' ', '')}` = "
 
@@ -21,7 +21,7 @@ async def roll_dice(message: Message):
 
     reply += f"{content} = {int(await calculate(expression))}"
 
-    await channel.send(reply)
+    return reply
 
 
 def format_kh1_kl1(return_dict: dict, numbers: list, display_number: int) -> dict:

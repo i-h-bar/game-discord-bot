@@ -20,3 +20,6 @@ dice_help = f"Success = {ds.success}\n" \
             f"Light = {ds.light}\n" \
             f"Dark = {ds.dark}\n" \
             f"Blank = {ds.blank}"
+
+
+edge_help = f"{rolling_help}\n{dice_help}"

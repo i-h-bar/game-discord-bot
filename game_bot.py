@@ -1,13 +1,20 @@
+import asyncio
+import io
 import os
+
+import discord
+
 from discord.ext import commands
 
-from mtg_functions import mtg_bot
-from dnd_functions import dnd_bot
-from edge_functions import edge_bot
-
 from constants.help import HELP_MESSAGE
-from game_functions.game_tracking import tracker
-from game_functions.games import MTG, DND, EDGE
+from dnd_functions.dnd_api import get_spell
+from dnd_functions.message_formatting.message_formatting import format_spell
+from edge_functions.pre_built_messages.help_messages import edge_help
+from mtg_functions.scryfall import search_scryfall
+from table_top_items.calculator import calculate_from_message
+from table_top_items.coin import flip_coin
+from table_top_items.dice_parser import get_roll
+
 
 bot = commands.Bot(command_prefix="/")
 
@@ -22,59 +29,38 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
-    if message.content.startswith("!set"):
-        content = message.content
+    channel = message.channel
 
-        if content.replace("!set", "").lower().strip() == MTG:
-            tracker[message.channel.id] = MTG
-            await message.channel.send(f"{message.author.mention} Game set to - Magic the Gathering")
-
-        elif content.replace("!set", "").lower().strip() == DND:
-            tracker[message.channel.id] = DND
-            await message.channel.send(f"{message.author.mention} Game set to - Dungeons & Dragons")
-
-        elif content.replace("!set", "").lower().strip() == EDGE:
-            tracker[message.channel.id] = EDGE
-            await message.channel.send(f"{message.author.mention} Game set to - Star Wars: Edge of the Empire")
-
-    elif message.content.startswith("!game"):
-        if tracker.get(message.channel.id) == MTG:
-            current_game = "Magic the Gathering"
-        elif tracker.get(message.channel.id) == DND:
-            current_game = "Dungeons & Dragons"
-        elif tracker.get(message.channel.id) == EDGE:
-            current_game = "Star Wars: Edge of the Empire"
-        else:
-            current_game = "none"
-
-        await message.channel.send(f"{message.author.mention} Game is currently - {current_game}.")
-
-    elif message.content.startswith("!help") or \
-            (message.content.startswith("/help") and tracker.get(message.channel.id) is None):
-        await message.channel.send(f"{message.author.mention} \n" + HELP_MESSAGE)
-
-    elif tracker.get(message.channel.id) == MTG:
-        await mtg_bot.on_message(message)
-
-    elif tracker.get(message.channel.id) == DND:
-        await dnd_bot.on_message(message)
-
-    elif tracker.get(message.channel.id) == EDGE:
-        await edge_bot.on_message(message)
-
-    elif message.content.startswith("/r") or message.content.startswith("/roll"):
-        await dnd_bot.on_message(message)
+    if message.content.startswith("/r") or message.content.startswith("/roll"):
+        message.content = message.content.replace("/roll", "").replace("/r", "")
+        await channel.send(await get_roll(message))
 
     elif message.content.startswith("/c"):
-        await dnd_bot.on_message(message)
+        await channel.send(await calculate_from_message(message))
 
-    elif message.content.startswith("/s dnd"):
-        message.content = message.content.replace("dnd", "")
-        await dnd_bot.on_message(message)
+    elif message.content.startswith("/s"):
+        spell_name = message.content.replace("/search", "").replace("/s", "").strip()
 
-    elif message.content.startswith("/s mtg"):
-        message.content = message.content.replace("dnd", "")
-        await mtg_bot.on_message(message)
+        for reply in await format_spell(message, spell_name, await get_spell(spell_name)):
+            await channel.send(reply)
+
+    elif message.content.startswith("/flip"):
+        await channel.send(await flip_coin(message))
+
+    elif "[[" in message.content and "]]" in message.content:
+        async for card_info, card_image in await search_scryfall(message):
+            reply = f"{message.author.mention}\n"
+            await channel.send(
+                reply,
+                file=discord.File(io.BytesIO(card_image), f"{card_info.get('name', 'default').replace(' ', '_')}.png")
+            )
+            await asyncio.sleep(0.05)
+
+    elif message.content.startswith("/h"):
+        if "edge" in message.content:
+            await channel.send(f"{message.author.mention}\n{edge_help}")
+        else:
+            await channel.send(f"{message.author.mention}\n{HELP_MESSAGE}")
 
 
 bot.run(os.getenv("game_bot_token"))
