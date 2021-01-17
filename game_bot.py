@@ -1,15 +1,15 @@
 import os
 from discord.ext import commands
 
-from mtg_discord_bot import mtg_bot
-from dnd_discord_bot import dnd_bot
-from edge_discord_bot import edge_bot
+from mtg_functions import mtg_bot
+from dnd_functions import dnd_bot
+from edge_functions import edge_bot
 
 from constants.help import HELP_MESSAGE
-from game_bot_functions.game_tracking import tracker
-from game_bot_functions.games import MTG, DND, EDGE
+from game_functions.game_tracking import tracker
+from game_functions.games import MTG, DND, EDGE
 
-bot = commands.Bot(command_prefix=("/", "!"))
+bot = commands.Bot(command_prefix="/")
 
 
 @bot.event
