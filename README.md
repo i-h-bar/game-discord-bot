@@ -20,6 +20,7 @@ You can roll multiple dice, add modifiers etc. to your rolls examples below and 
 - `/r 2d20kh1 + 7` Roll keeping the highest result then adding 7
 - `/r 2d20kl1 + 8` Roll keeping the lowest result then adding 8
 - `/r 2d8*2 + 2` Roll 2d8 times the result by 2 and then add 2
+- `/r 3[2d6 + 5]` Repeat the action of rolling 2d6 and then adding 5
 
 #### Calculation
 Basic calculation can be done by using `/c`: adding, subtracting, multiplication, division, and brackets
