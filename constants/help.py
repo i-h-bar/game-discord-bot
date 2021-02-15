@@ -30,4 +30,5 @@ HELP_MESSAGE = (
     "Proficiency Die = pd\n"
     "Challenge Die = cd\n"
     "Force Die = fd\n"
+    "Ability Die = ad"
 )

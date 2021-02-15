@@ -9,7 +9,7 @@ from discord.ext import commands
 from constants.help import HELP_MESSAGE
 from dnd_functions.dnd_api import get_spell
 from dnd_functions.message_formatting.message_formatting import format_spell
-from edge_functions.pre_built_messages.help_messages import edge_help
+from edge_functions.pre_built_messages.help_messages import EDGE_HELP
 from mtg_functions.scryfall import search_scryfall
 from table_top_items.calculator import calculate_from_message
 from table_top_items.coin import flip_coin
@@ -58,7 +58,7 @@ async def on_message(message):
 
     elif message.content.startswith("/h"):
         if "edge" in message.content:
-            await channel.send(f"{message.author.mention}\n{edge_help}")
+            await channel.send(f"{message.author.mention}\n{EDGE_HELP}")
         else:
             await channel.send(f"{message.author.mention}\n{HELP_MESSAGE}")
 

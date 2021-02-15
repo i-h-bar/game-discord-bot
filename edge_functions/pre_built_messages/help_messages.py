@@ -1,17 +1,18 @@
 from edge_functions.dice_logic import dice_sides as ds
 
-rolling_help = "To roll a die, type \"/r\" followed by any of the following:\n" \
+ROLLING_HELP = "To roll a die, type \"/r\" followed by any of the following:\n" \
                "Boost Die = bd\n" \
                "Set Back Die = sbd\n" \
                "Difficulty Die = dd\n" \
                "Proficiency Die = pd\n" \
                "Challenge Die = cd\n" \
                "Force Die = fd\n" \
+               "Ability Die = ad\n" \
                "\nTo roll more than one of the same die put a number before your die \"/r 3fd\"" \
                "\nTo roll more than one of a differing dice separate them by a \"+\" \"/r 2fd + 6sbd\""
 
 
-dice_help = f"Success = {ds.success}\n" \
+DICE_HELP = f"Success = {ds.success}\n" \
             f"Fail = {ds.fail}\n" \
             f"Triumph = {ds.triumph}\n" \
             f"Advantage = {ds.advantage}\n" \
@@ -22,4 +23,4 @@ dice_help = f"Success = {ds.success}\n" \
             f"Blank = {ds.blank}"
 
 
-edge_help = f"{rolling_help}\n{dice_help}"
+EDGE_HELP = f"{ROLLING_HELP}\n{DICE_HELP}"
