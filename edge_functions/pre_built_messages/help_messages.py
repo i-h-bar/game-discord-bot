@@ -13,7 +13,7 @@ ROLLING_HELP = "To roll a die, type \"/r\" followed by any of the following:\n" 
 
 
 DICE_HELP = f"Success = {ds.SUCCESS}\n" \
-            f"Fail = {ds.FAIL}\n" \
+            f"Fail = {ds.FAILURE}\n" \
             f"Triumph = {ds.TRIUMPH}\n" \
             f"Advantage = {ds.ADVANTAGE}\n" \
             f"Despair = {ds.DESPAIR}\n" \
