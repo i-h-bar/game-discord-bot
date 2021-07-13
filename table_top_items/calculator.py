@@ -11,13 +11,13 @@ operators = {
 }
 
 
-async def calculate_from_message(message):
+def calculate_from_message(message):
     reply = f"{message.author.mention} `{message.content.replace(' ', '').replace('/c', '').strip()}` = "
-    reply += str(await calculate(message.content.replace("/c", "")))
+    reply += str(calculate(message.content.replace("/c", "")))
     return reply
 
 
-async def calculate(expression: str) -> Union[float, int, str]:
+def calculate(expression: str) -> Union[float, int, str]:
     while "(" in expression or ")" in expression:
         if expression.count(")") != expression.count("("):
             return "Uneven brackets"
@@ -26,7 +26,7 @@ async def calculate(expression: str) -> Union[float, int, str]:
         for bracketed_expression in bracketed_expressions:
             expression = expression.replace(
                 bracketed_expression,
-                str(await calculate(bracketed_expression[1:-1])),
+                str(calculate(bracketed_expression[1:-1])),
                 1
             )
 
@@ -44,8 +44,8 @@ async def calculate(expression: str) -> Union[float, int, str]:
         if operator in operators:
             try:
                 return operators[operator](
-                    await calculate(left.strip()),
-                    await calculate(right.strip())
+                    calculate(left.strip()),
+                    calculate(right.strip())
                 )
             except ZeroDivisionError:
                 return "Tried to divide by 0"

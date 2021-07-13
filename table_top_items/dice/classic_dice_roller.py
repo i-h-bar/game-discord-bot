@@ -6,11 +6,11 @@ from discord.message import Message
 from table_top_items.calculator import calculate
 
 
-async def roll_dice(message: Message):
+def roll_dice(message: Message):
     content = message.content
 
     if "[" in content and "]" in content:
-        return await roll_repeated_action(message)
+        return roll_repeated_action(message)
 
     expression = content
     reply = f"{message.author.mention} `{content.replace(' ', '')}` = "
@@ -19,12 +19,12 @@ async def roll_dice(message: Message):
 
     expression, content = roll_all_dice(dice, expression, content)
 
-    reply += f"{content} = {int(await calculate(expression))}"
+    reply += f"{content} = {int(calculate(expression))}"
 
     return reply
 
 
-async def roll_repeated_action(message: Message):
+def roll_repeated_action(message: Message):
     content = message.content
     expression = content
     reply = f"{message.author.mention} `{content.replace(' ', '')}` = "
@@ -40,7 +40,7 @@ async def roll_repeated_action(message: Message):
     reply += f"{content} = "
     for single_expression in re.findall(r"\[[0-9+\-*/ ()]+]", expression):
         single_expression = single_expression.replace("[", "").replace("]", "")
-        reply += f"[{int(await calculate(single_expression))}] "
+        reply += f"[{int(calculate(single_expression))}] "
 
     return reply
 
