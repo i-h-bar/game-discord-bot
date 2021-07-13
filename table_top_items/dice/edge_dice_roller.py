@@ -5,7 +5,7 @@ from discord import Message
 from edge_functions.dice_logic.command_map import dice_map
 
 
-async def roll_edge_dice(message: Message) -> str:
+def roll_edge_dice(message: Message) -> str:
     reply = f"{message.author.mention}"
 
     for dice_roll in message.content.split("+"):
@@ -24,3 +24,5 @@ async def roll_edge_dice(message: Message) -> str:
             reply += f"\n`{die.name}` = {' + '.join([die() for _ in range(times)])}"
 
     return reply
+
+

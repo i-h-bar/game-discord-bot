@@ -33,10 +33,10 @@ async def on_message(message):
 
     if message.content.startswith("/r") or message.content.startswith("/roll"):
         message.content = message.content.replace("/roll", "").replace("/r", "")
-        await channel.send(await get_roll(message))
+        await channel.send(get_roll(message))
 
     elif message.content.startswith("/c"):
-        await channel.send(await calculate_from_message(message))
+        await channel.send(calculate_from_message(message))
 
     elif message.content.startswith("/s"):
         spell_name = message.content.replace("/search", "").replace("/s", "").strip()
