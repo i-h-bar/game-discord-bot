@@ -1,3 +1,4 @@
+import heapq
 import random
 import re
 
@@ -15,7 +16,7 @@ def roll_dice(message: Message):
     expression = content
     reply = f"{message.author.mention} `{content.replace(' ', '')}` = "
 
-    dice = re.findall(r"(:?\d+)?d(:?\d+)?(:?kh1)?(:?kl1)?", content)
+    dice = re.findall(r"(:?\d+)?d(:?\d+)?(:?kh\d+)?(:?kl\d+)?", content)
 
     expression, content = roll_all_dice(dice, expression, content)
 
@@ -33,7 +34,7 @@ def roll_repeated_action(message: Message):
         times_repeated = int(action.split("[")[0])
         content = content.replace(action, ("[" + action.split("[")[-1])*times_repeated)
         expression = content.replace(action, ("[" + action.split("[")[-1])*times_repeated)
-        dice = re.findall(r"(:?\d+)?d(:?\d+)?(:?kh1)?(:?kl1)?", action)
+        dice = re.findall(r"(:?\d+)?d(:?\d+)?(:?kh\d+)?(:?kl\d+)?", action)
         for _ in range(times_repeated):
             expression, content = roll_all_dice(dice, expression, content)
 
@@ -55,14 +56,14 @@ def roll_all_dice(dice, expression, content):
     return expression, content
 
 
-def format_kh1_kl1(return_dict: dict, numbers: list, display_number: int) -> dict:
+def format_keeps(return_dict: dict, numbers: list, display_number: list) -> dict:
     return_dict["content"] = "("
-    found = False
+    found = []
     for num in numbers:
-        if num != display_number or found:
+        if num not in display_number or len(found) >= len(display_number):
             return_dict["content"] += f'~~{num}~~, '
         else:
-            found = True
+            found.append(True)
             return_dict["content"] += f"{num}, "
 
     return_dict["content"] = return_dict["content"][:-2] + ")"
@@ -83,14 +84,16 @@ def parse_rolls(dice_info: tuple) -> dict:
         numbers.append(random.randint(1, int(die_type)))
 
     if dice_info[2]:
-        max_number = max(numbers)
-        return_dict["expression"] = "(" + str(max_number) + ")"
-        return_dict = format_kh1_kl1(return_dict, numbers, max_number)
+        number_of_elements = int(re.findall(r"\d+", dice_info[2])[0])
+        max_numbers = heapq.nlargest(number_of_elements, numbers)
+        return_dict["expression"] = "(" + str(sum(max_numbers)) + ")"
+        return_dict = format_keeps(return_dict, numbers, max_numbers)
 
     elif dice_info[3]:
-        min_number = min(numbers)
-        return_dict["expression"] = "(" + str(min_number) + ")"
-        return_dict = format_kh1_kl1(return_dict, numbers, min_number)
+        number_of_elements = int(re.findall(r"\d+", dice_info[3])[0])
+        min_number = heapq.nsmallest(number_of_elements, numbers)
+        return_dict["expression"] = "(" + str(sum(min_number)) + ")"
+        return_dict = format_keeps(return_dict, numbers, min_number)
 
     else:
         return_dict["expression"] = ""
