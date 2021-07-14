@@ -3,7 +3,7 @@ import io
 import os
 
 import discord
-
+from discord import Message
 from discord.ext import commands
 
 from constants.help import HELP_MESSAGE
@@ -14,7 +14,7 @@ from mtg_functions.scryfall import search_scryfall
 from table_top_items.calculator import calculate_from_message
 from table_top_items.coin import flip_coin
 from table_top_items.dice_parser import get_roll
-
+from utility_functions.discord_utility import determine_send_function
 
 bot = commands.Bot(command_prefix="/")
 
@@ -25,32 +25,32 @@ async def on_ready():
 
 
 @bot.event
-async def on_message(message):
+async def on_message(message: Message):
     if message.author == bot.user:
         return
 
-    channel = message.channel
+    send_message = determine_send_function(message)
 
     if message.content.startswith("/r") or message.content.startswith("/roll"):
         message.content = message.content.replace("/roll", "").replace("/r", "")
-        await channel.send(get_roll(message))
+        await send_message(get_roll(message))
 
     elif message.content.startswith("/c"):
-        await channel.send(calculate_from_message(message))
+        await send_message(calculate_from_message(message))
 
     elif message.content.startswith("/s"):
         spell_name = message.content.replace("/search", "").replace("/s", "").strip()
 
         for reply in await format_spell(message, spell_name, await get_spell(spell_name)):
-            await channel.send(reply)
+            await send_message(reply)
 
     elif message.content.startswith("/flip"):
-        await channel.send(await flip_coin(message))
+        await send_message(await flip_coin(message))
 
     elif "[[" in message.content and "]]" in message.content:
         async for card_info, card_image in await search_scryfall(message):
             reply = f"{message.author.mention}\n"
-            await channel.send(
+            await send_message(
                 reply,
                 file=discord.File(io.BytesIO(card_image), f"{card_info.get('name', 'default').replace(' ', '_')}.png")
             )
@@ -58,9 +58,9 @@ async def on_message(message):
 
     elif message.content.startswith("/h"):
         if "edge" in message.content:
-            await channel.send(f"{message.author.mention}\n{EDGE_HELP}")
+            await send_message(f"{message.author.mention}\n{EDGE_HELP}")
         else:
-            await channel.send(f"{message.author.mention}\n{HELP_MESSAGE}")
+            await send_message(f"{message.author.mention}\n{HELP_MESSAGE}")
 
 
 bot.run(os.getenv("game_bot_token"))
