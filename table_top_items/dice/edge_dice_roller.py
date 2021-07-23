@@ -5,7 +5,8 @@ from discord import Message
 
 from edge_functions.dice_logic.command_map import dice_map
 from edge_functions.dice_logic.dice_groups import ALL_DICE
-from edge_functions.dice_logic.dice_sides import SUCCESS, ADVANTAGE, TRIUMPH, FAILURE, THREAT, DESPAIR, LIGHT, DARK
+from edge_functions.dice_logic.dice_sides import SUCCESS, ADVANTAGE, TRIUMPH, FAILURE, THREAT, DESPAIR, LIGHT, DARK, \
+    BLANK
 
 
 def roll_edge_dice(message: Message) -> str:
@@ -70,6 +71,9 @@ def parse_edge_rolls(dice_rolls: dict[str, list[str]]) -> str:
         message += f"{totals[TRIUMPH]}{TRIUMPH}, "
     if totals[DESPAIR] > 0:
         message += f"{totals[DESPAIR]}{DESPAIR}, "
+
+    if message == "\n`Total` = ":
+        message += f"{BLANK}"
 
     return message.rstrip(", ").replace("1", "")
 
