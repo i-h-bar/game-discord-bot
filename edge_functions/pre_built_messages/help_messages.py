@@ -2,7 +2,7 @@ from edge_functions.dice_logic import dice_sides as ds
 
 ROLLING_HELP = "To roll a die, type \"/r\" followed by any of the following:\n" \
                "Boost Die = bd\n" \
-               "Set Back Die = sbd\n" \
+               "Set Back Die = sd\n" \
                "Difficulty Die = dd\n" \
                "Proficiency Die = pd\n" \
                "Challenge Die = cd\n" \
