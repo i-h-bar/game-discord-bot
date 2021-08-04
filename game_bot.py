@@ -1,6 +1,7 @@
 import asyncio
 import io
 import os
+import json
 
 import discord
 from discord import Message
@@ -15,6 +16,7 @@ from table_top_items.calculator import calculate_from_message
 from table_top_items.coin import flip_coin
 from table_top_items.dice_parser import get_roll
 from utility_functions.discord_utility import determine_send_function
+from wow.parse import item_look_up
 
 bot = commands.Bot(command_prefix="/")
 
@@ -55,6 +57,9 @@ async def on_message(message: Message):
                 file=discord.File(io.BytesIO(card_image), f"{card_info.get('name', 'default').replace(' ', '_')}.png")
             )
             await asyncio.sleep(0.05)
+
+    elif "{" in message.content and "}" in message.content:
+        await send_message(item_look_up(message.content))
 
     elif message.content.startswith("/h"):
         if "edge" in message.content:
