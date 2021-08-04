@@ -13,13 +13,13 @@ async def get_spell(spell_name):
 
     if spell_info["count"] > 0:
         levenshteins = {
-            await levenshtein_distance(spell_name, spell["name"]): spell["url"] for spell in spell_info["results"]
+            levenshtein_distance(spell_name, spell["name"]): spell["url"] for spell in spell_info["results"]
         }
     else:
         await asyncio.sleep(0.05)
         spell_info = await async_get(f"{DND_API}{SPELL}")
         levenshteins = {
-            await levenshtein_distance(spell_name, spell["name"]): spell["url"] for spell in spell_info["results"]
+            levenshtein_distance(spell_name, spell["name"]): spell["url"] for spell in spell_info["results"]
         }
 
     await asyncio.sleep(0.05)
