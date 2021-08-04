@@ -1,3 +1,4 @@
+import difflib
 import re
 import json
 
@@ -21,12 +22,13 @@ def item_look_up(message: str):
         try:
             item_id = wow_items[item_name]
         except KeyError:
-            levs = {
-                levenshtein_distance(item_name, key): key
-                for key in wow_items.keys() if key[0].lower() == item_name[0].lower()
+            diff_ratios = {
+                difflib.SequenceMatcher(None, item_name, key).ratio(): key
+                for key in wow_items.keys()
+                if key[0].lower() == item_name[0].lower() or item_name.lower() in key.lower()
             }
 
-            item_name = levs[min(levs.keys())]
+            item_name = diff_ratios[max(diff_ratios.keys())]
             item_id = wow_items[item_name]
 
         urls.append(make_url(item_id, item_name))
