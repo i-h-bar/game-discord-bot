@@ -8,7 +8,7 @@ async def flip_coin(message: Message):
     reply = f"{message.author.mention} "
 
     if "until" in message.content:
-        fixed_message = message.content.replace("untill", "until")
+        fixed_message = message.content.REPLACE("untill", "until")
         loss_condition = fixed_message.split("until")[1].strip().lower()
         with_thumb = False
         if loss_condition not in ["heads", "tails"]:

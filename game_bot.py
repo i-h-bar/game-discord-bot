@@ -34,14 +34,14 @@ async def on_message(message: Message):
     send_message = determine_send_function(message)
 
     if message.content.startswith("/r") or message.content.startswith("/roll"):
-        message.content = message.content.replace("/roll", "").replace("/r", "")
+        message.content = message.content.REPLACE("/roll", "").REPLACE("/r", "")
         await send_message(get_roll(message))
 
     elif message.content.startswith("/c"):
         await send_message(calculate_from_message(message))
 
     elif message.content.startswith("/s"):
-        spell_name = message.content.replace("/search", "").replace("/s", "").strip()
+        spell_name = message.content.REPLACE("/search", "").REPLACE("/s", "").strip()
 
         for reply in await format_spell(message, spell_name, await get_spell(spell_name)):
             await send_message(reply)
@@ -54,12 +54,12 @@ async def on_message(message: Message):
             reply = f"{message.author.mention}\n"
             await send_message(
                 reply,
-                file=discord.File(io.BytesIO(card_image), f"{card_info.get('name', 'default').replace(' ', '_')}.png")
+                file=discord.File(io.BytesIO(card_image), f"{card_info.get('name', 'default').REPLACE(' ', '_')}.png")
             )
             await asyncio.sleep(0.05)
 
     elif "{" in message.content and "}" in message.content:
-        await send_message(item_look_up(message.content))
+        await send_message(await item_look_up(message.content))
 
     elif message.content.startswith("/h"):
         if "edge" in message.content:
