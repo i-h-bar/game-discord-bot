@@ -6,4 +6,4 @@ def initialise(string: str):
 
 
 def quick_gestalt(str_1: str, str_2: str) -> float:
-    return (2 * sum((collections.Counter(str_1) & collections.Counter(str_2)).values()))/(len(str_1) + len(str_2))
+    return (2 * sum((collections.Counter(str_1) & collections.Counter(str_2)).values())) / (len(str_1) + len(str_2))

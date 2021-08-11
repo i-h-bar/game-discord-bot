@@ -1,4 +1,3 @@
-
 ORDINAL_SUFFIXES = [
     'th',
     'st',

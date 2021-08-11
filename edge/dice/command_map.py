@@ -1,6 +1,5 @@
-
-from edge_functions.dice_logic.dice_groups import ALL_DICE
-from utility_functions.strings import initialise
+from edge.dice.groups import ALL_DICE
+from utils.strings import initialise
 
 dice_map = {die.name: die() for die in ALL_DICE}
 

@@ -1,7 +1,7 @@
 import functools
 import time
 
-from dev_tools.functions import get_function_name
+from utils.dev.functions import get_function_name
 
 
 def async_time_it(coroutine):

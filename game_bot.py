@@ -1,21 +1,20 @@
 import asyncio
 import io
 import os
-import json
 
 import discord
 from discord import Message
 from discord.ext import commands
 
-from constants.help import HELP_MESSAGE
-from dnd_functions.dnd_api import get_spell
-from dnd_functions.message_formatting.message_formatting import format_spell
-from edge_functions.pre_built_messages.help_messages import EDGE_HELP
-from mtg_functions.scryfall import search_scryfall
-from table_top_items.calculator import calculate_from_message
-from table_top_items.coin import flip_coin
-from table_top_items.dice_parser import get_roll
-from utility_functions.discord_utility import determine_send_function
+from dnd.api import get_spell
+from dnd.formatting.message import format_spell
+from edge.messages.help import EDGE_HELP
+from mtg.scryfall import search_scryfall
+from table_top.calculator import calculate_from_message
+from table_top.coin import flip_coin
+from table_top.dice.roller import get_roll
+from utils.discord import determine_send_function
+from utils.help import HELP_MESSAGE
 from wow.parse import item_look_up
 
 bot = commands.Bot(command_prefix="/")

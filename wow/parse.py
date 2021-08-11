@@ -4,8 +4,8 @@ import re
 
 from cache import AsyncTTL
 
-from utility_functions.aio import asyncify
-from utility_functions.strings import quick_gestalt
+from utils.aio.wrappers import asyncify
+from utils.strings import quick_gestalt
 
 with open("wow/data/items.json", "r") as in_file:
     wow_items = json.load(in_file)

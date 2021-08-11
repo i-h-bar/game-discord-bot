@@ -3,9 +3,9 @@ from collections import defaultdict
 
 from discord import Message
 
-from edge_functions.dice_logic.command_map import dice_map
-from edge_functions.dice_logic.dice_groups import ALL_DICE
-from edge_functions.dice_logic.dice_sides import SUCCESS, ADVANTAGE, TRIUMPH, FAILURE, THREAT, DESPAIR, LIGHT, DARK, \
+from edge.dice.command_map import dice_map
+from edge.dice.groups import ALL_DICE
+from edge.dice.sides import SUCCESS, ADVANTAGE, TRIUMPH, FAILURE, THREAT, DESPAIR, LIGHT, DARK, \
     BLANK
 
 
@@ -85,9 +85,3 @@ def format_message(num, positive, negative):
         return f"{num}{positive}, "
     else:
         return ""
-
-
-
-
-
-
