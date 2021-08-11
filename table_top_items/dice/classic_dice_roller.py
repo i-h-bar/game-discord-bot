@@ -32,8 +32,8 @@ def roll_repeated_action(message: Message):
 
     for action in re.findall(r"\d+\[[dklh+\-/*0-9 ]+]", content):
         times_repeated = int(action.split("[")[0])
-        content = content.replace(action, ("[" + action.split("[")[-1])*times_repeated)
-        expression = content.replace(action, ("[" + action.split("[")[-1])*times_repeated)
+        content = content.replace(action, ("[" + action.split("[")[-1]) * times_repeated)
+        expression = content.replace(action, ("[" + action.split("[")[-1]) * times_repeated)
         dice = re.findall(r"(:?\d+)?d(:?\d+)?(:?kh\d+)?(:?kl\d+)?", action)
         for _ in range(times_repeated):
             expression, content = roll_all_dice(dice, expression, content)
