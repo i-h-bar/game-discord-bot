@@ -1,4 +1,4 @@
-from utility_functions.numbers import ordinal
+from utils.number import ordinal
 
 
 async def get_spell_level_and_school(level, school):

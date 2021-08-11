@@ -2,7 +2,7 @@ import asyncio
 import re
 from typing import Tuple
 
-from requests_handler.async_requests import async_get
+from utils.aio.requests import async_get
 
 SCRYFALL = "https://api.scryfall.com"
 CARD_SEARCH_API = "/cards/named"

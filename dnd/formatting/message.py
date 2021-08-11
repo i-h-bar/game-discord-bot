@@ -1,5 +1,4 @@
-from dnd_functions.message_formatting.spell_level_and_school import get_spell_level_and_school
-
+from dnd.formatting.spell import get_spell_level_and_school
 
 MAX_MESSAGE_LENGTH = 2000
 

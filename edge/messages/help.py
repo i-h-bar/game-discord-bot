@@ -1,4 +1,4 @@
-from edge_functions.dice_logic import dice_sides as ds
+from edge.dice import sides as ds
 
 ROLLING_HELP = "To roll a die, type \"/r\" followed by any of the following:\n" \
                "Boost Die = bd\n" \
@@ -11,7 +11,6 @@ ROLLING_HELP = "To roll a die, type \"/r\" followed by any of the following:\n" 
                "\nTo roll more than one of the same die put a number before your die \"/r 3fd\"" \
                "\nTo roll more than one of a differing dice separate them by a \"+\" \"/r 2ad + 6sb\""
 
-
 DICE_HELP = f"Success = {ds.SUCCESS}\n" \
             f"Fail = {ds.FAILURE}\n" \
             f"Triumph = {ds.TRIUMPH}\n" \
@@ -21,6 +20,5 @@ DICE_HELP = f"Success = {ds.SUCCESS}\n" \
             f"Light = {ds.LIGHT}\n" \
             f"Dark = {ds.DARK}\n" \
             f"Blank = {ds.BLANK}"
-
 
 EDGE_HELP = f"{ROLLING_HELP}\n{DICE_HELP}"

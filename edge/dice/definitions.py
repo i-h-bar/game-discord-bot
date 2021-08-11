@@ -1,6 +1,6 @@
 import random
 
-from edge_functions.dice_logic.dice_sides import BLANK, SUCCESS, ADVANTAGE, FAILURE, THREAT, TRIUMPH, DESPAIR, DARK, \
+from edge.dice.sides import BLANK, SUCCESS, ADVANTAGE, FAILURE, THREAT, TRIUMPH, DESPAIR, DARK, \
     LIGHT
 
 
@@ -49,11 +49,11 @@ class Challenge(EdgeDie):
     positive = False
     sides = [
         FAILURE, FAILURE, FAILURE * 2, FAILURE * 2, THREAT, THREAT,
-        FAILURE + THREAT, FAILURE + THREAT, THREAT * 2, THREAT * 2, DESPAIR
+                          FAILURE + THREAT, FAILURE + THREAT, THREAT * 2, THREAT * 2, DESPAIR
     ]
 
 
 class Force(EdgeDie):
     name = "Force Die"
     positive = None
-    sides = [DARK]*6 + [DARK*2] + [LIGHT]*2 + [LIGHT*2]*3
+    sides = [DARK] * 6 + [DARK * 2] + [LIGHT] * 2 + [LIGHT * 2] * 3

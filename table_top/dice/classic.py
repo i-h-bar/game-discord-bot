@@ -4,7 +4,7 @@ import re
 
 from discord.message import Message
 
-from table_top_items.calculator import calculate
+from table_top.calculator import calculate
 
 
 def roll_dice(message: Message):
