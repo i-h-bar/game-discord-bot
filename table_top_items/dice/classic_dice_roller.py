@@ -14,7 +14,7 @@ def roll_dice(message: Message):
         return roll_repeated_action(message)
 
     expression = content
-    reply = f"{message.author.mention} `{content.REPLACE(' ', '')}` = "
+    reply = f"{message.author.mention} `{content.replace(' ', '')}` = "
 
     dice = re.findall(r"(:?\d+)?d(:?\d+)?(:?kh\d+)?(:?kl\d+)?", content)
 
@@ -28,19 +28,19 @@ def roll_dice(message: Message):
 def roll_repeated_action(message: Message):
     content = message.content
     expression = content
-    reply = f"{message.author.mention} `{content.REPLACE(' ', '')}` = "
+    reply = f"{message.author.mention} `{content.replace(' ', '')}` = "
 
     for action in re.findall(r"\d+\[[dklh+\-/*0-9 ]+]", content):
         times_repeated = int(action.split("[")[0])
-        content = content.REPLACE(action, ("[" + action.split("[")[-1]) * times_repeated)
-        expression = content.REPLACE(action, ("[" + action.split("[")[-1]) * times_repeated)
+        content = content.replace(action, ("[" + action.split("[")[-1]) * times_repeated)
+        expression = content.replace(action, ("[" + action.split("[")[-1]) * times_repeated)
         dice = re.findall(r"(:?\d+)?d(:?\d+)?(:?kh\d+)?(:?kl\d+)?", action)
         for _ in range(times_repeated):
             expression, content = roll_all_dice(dice, expression, content)
 
     reply += f"{content} = "
     for single_expression in re.findall(r"\[[0-9+\-*/ ()]+]", expression):
-        single_expression = single_expression.REPLACE("[", "").REPLACE("]", "")
+        single_expression = single_expression.replace("[", "").replace("]", "")
         reply += f"[{int(calculate(single_expression))}] "
 
     return reply
@@ -50,8 +50,8 @@ def roll_all_dice(dice, expression, content):
     for die in dice:
         roll_info = parse_rolls(die)
         typed_die = f"{die[0]}d{die[1]}{die[2]}{die[3]}"
-        expression = expression.REPLACE(typed_die, roll_info["expression"], 1).strip()
-        content = content.REPLACE(typed_die, roll_info["content"], 1).strip()
+        expression = expression.replace(typed_die, roll_info["expression"], 1).strip()
+        content = content.replace(typed_die, roll_info["content"], 1).strip()
 
     return expression, content
 

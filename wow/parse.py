@@ -10,7 +10,7 @@ from utility_functions.strings import quick_gestalt
 with open("wow/data/items.json", "r") as in_file:
     wow_items = json.load(in_file)
 
-REPLACE = "'"
+REPLACE_CHAR = "'"
 
 
 async def item_look_up(message: str):
@@ -20,7 +20,7 @@ async def item_look_up(message: str):
 
 
 def make_url(item_id: int, item_name: str):
-    return f"https://tbc.wowhead.com/item={item_id}/{'-'.join(item_name.replace(REPLACE, '').lower().split())}"
+    return f"https://tbc.wowhead.com/item={item_id}/{'-'.join(item_name.replace(REPLACE_CHAR, '').lower().split())}"
 
 
 @AsyncTTL(time_to_live=86400)

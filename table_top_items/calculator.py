@@ -12,8 +12,8 @@ operators = {
 
 
 def calculate_from_message(message):
-    reply = f"{message.author.mention} `{message.content.REPLACE(' ', '').REPLACE('/c', '').strip()}` = "
-    reply += str(calculate(message.content.REPLACE("/c", "")))
+    reply = f"{message.author.mention} `{message.content.replace(' ', '').replace('/c', '').strip()}` = "
+    reply += str(calculate(message.content.replace("/c", "")))
     return reply
 
 
