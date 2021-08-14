@@ -2,10 +2,11 @@ import difflib
 import json
 import re
 
+from Levenshtein import distance
 from cache import AsyncTTL
 
 from utils.aio.wrappers import asyncify
-from utils.strings import quick_gestalt
+
 
 with open("wow/data/items.json", "r") as in_file:
     wow_items = json.load(in_file)
@@ -33,7 +34,7 @@ def wow_fuzzy_match(item_name: str):
         diff_ratios = {
             difflib.SequenceMatcher(a=item_name, b=key).ratio(): key
             for key in wow_items.keys()
-            if quick_gestalt(item_name, key) > 0.75
+            if distance(item_name, key) < 10
         }
 
         try:

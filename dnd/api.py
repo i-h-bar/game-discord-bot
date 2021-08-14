@@ -1,9 +1,10 @@
 import asyncio
 import difflib
 
+from Levenshtein import distance
+
 from dnd.constants import DND_API, SPELL
 from utils.aio.requests import async_get
-from utils.strings import quick_gestalt
 
 
 async def get_spell(spell_name):
@@ -12,7 +13,7 @@ async def get_spell(spell_name):
     if spell_info["count"] > 0:
         difference_scores = {
             difflib.SequenceMatcher(a=spell_name, b=spell["name"]).ratio(): spell["url"]
-            for spell in spell_info["results"] if quick_gestalt(spell_name, spell["name"]) > 0.5
+            for spell in spell_info["results"] if distance(spell_name, spell["name"]) < 10
         }
     else:
         await asyncio.sleep(0.05)
