@@ -1,3 +1,4 @@
 discord.py
 httpx
 async-cache
+python-Levenshtein
