@@ -10,7 +10,7 @@ from edge.dice.sides import SUCCESS, ADVANTAGE, TRIUMPH, FAILURE, THREAT, DESPAI
 
 
 def roll_edge_dice(message: Message) -> str:
-    reply = f"{message.author.mention}"
+    reply = ""
 
     dice_rolls = defaultdict(list)
     for dice_roll in message.content.split("+"):

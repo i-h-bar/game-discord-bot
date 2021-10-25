@@ -9,7 +9,7 @@ ROLLING_HELP = "To roll a die, type \"/r\" followed by any of the following:\n" 
                "Force Die = fd\n" \
                "Ability Die = ad\n" \
                "\nTo roll more than one of the same die put a number before your die \"/r 3fd\"" \
-               "\nTo roll more than one of a differing dice separate them by a \"+\" \"/r 2ad + 6sb\""
+               "\nTo roll more than one of a differing dice_legacy separate them by a \"+\" \"/r 2ad + 6sb\""
 
 DICE_HELP = f"Success = {ds.SUCCESS}\n" \
             f"Fail = {ds.FAILURE}\n" \
