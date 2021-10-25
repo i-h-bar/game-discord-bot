@@ -16,7 +16,7 @@ def roll_dice(message: Message):
     expression = content
     reply = f"{message.author.mention} `{content.replace(' ', '')}` = "
 
-    dice = re.findall(r"(:?\d+)?d(:?\d+)?(:?kh\d+)?(:?kl\d+)?", content)
+    dice = re.findall(r"(:?\d+)?d(:?\d+)?(:?kh\d+)?(:?kl\d+)?(:?gwf)?", content)
 
     expression, content = roll_all_dice(dice, expression, content)
 
@@ -49,7 +49,7 @@ def roll_repeated_action(message: Message):
 def roll_all_dice(dice, expression, content):
     for die in dice:
         roll_info = parse_rolls(die)
-        typed_die = f"{die[0]}d{die[1]}{die[2]}{die[3]}"
+        typed_die = f"{die[0]}d{die[1]}{die[2]}{die[3]}{die[4]}"
         expression = expression.replace(typed_die, roll_info["expression"], 1).strip()
         content = content.replace(typed_die, roll_info["content"], 1).strip()
 
@@ -94,6 +94,12 @@ def parse_rolls(dice_info: tuple) -> dict:
         min_number = heapq.nsmallest(number_of_elements, numbers)
         return_dict["expression"] = "(" + str(sum(min_number)) + ")"
         return_dict = format_keeps(return_dict, numbers, min_number)
+
+    elif dice_info[4]:
+        numbers = [(number, number) if number > 2 else (number, random.randint(1, int(die_type))) for number in numbers]
+        return_dict["expression"] = f"({sum(num for _, num in numbers)})"
+        roll_content = ' + '.join([f'(~~{num1}~~, {num2})' if num1 <= 2 else str(num1) for num1, num2 in numbers])
+        return_dict["content"] = f"({roll_content})"
 
     else:
         return_dict["expression"] = ""
