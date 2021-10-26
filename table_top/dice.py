@@ -62,6 +62,8 @@ class Dice:
     def from_message(cls, message: str):
         num, die, kh, kl, gwf = re.match(r"(:?\d+)?d(:?\d+)?(:?kh\d+)?(:?kl\d+)?(:?gwf)?", message.strip()).groups()
 
+        if num is None:
+            num = 1
         if kh:
             kh = kh.lstrip("kh")
         if kl:
