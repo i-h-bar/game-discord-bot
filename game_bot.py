@@ -12,7 +12,7 @@ from edge.messages.help import EDGE_HELP
 from mtg.scryfall import search_scryfall
 from table_top.calculator import calculate_from_message
 from table_top.coin import flip_coin
-from table_top.dice.roller import get_roll
+from table_top.roller import get_roll
 from utils.discord import determine_send_function
 from utils.help import HELP_MESSAGE
 from wow.parse import item_look_up
@@ -34,7 +34,7 @@ async def on_message(message: Message):
 
     if message.content.startswith("/r") or message.content.startswith("/roll"):
         message.content = message.content.replace("/roll", "").replace("/r", "")
-        await send_message(get_roll(message))
+        await send_message(f"{message.author.mention} {get_roll(message)}")
 
     elif message.content.startswith("/c"):
         await send_message(calculate_from_message(message))

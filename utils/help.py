@@ -25,7 +25,7 @@ HELP_MESSAGE = (
     "Basic calculation can be done by using `/c`: adding, subtracting, multiplication, division, and brackets \n"
     "- `/c (5 + 3)*7`\n"
     "\n"
-    "To roll using edge dice you use `/r` like normal but using the dice name instead:\n"
+    "To roll using edge dice you use `/r` like normal but using the dice_legacy name instead:\n"
     "`/r 2fd + 2sbd`\n"
     "Boost Die = bd\n"
     "Set Back Die = sbd\n"
