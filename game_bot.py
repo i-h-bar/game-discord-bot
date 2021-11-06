@@ -66,5 +66,8 @@ async def on_message(message: Message):
         else:
             await send_message(f"{message.author.mention}\n{HELP_MESSAGE}")
 
+    elif message.content.strip().lower() == "good bot":
+        await send_message(f"{message.author.mention} Thanks!")
+
 
 bot.run(os.getenv("game_bot_token"))
