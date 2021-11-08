@@ -29,7 +29,7 @@ def get_roll(message):
 
 
 def roll_classic(content):
-    found_dice = re.findall(DICE_REGEX, content.replace(" ", ""))[:-1]
+    found_dice = [dice for dice in re.findall(DICE_REGEX, content.replace(" ", "")) if any(dice)]
     dice_pool = [
         int(dice[0]) if dice[0].lstrip("-").isdigit() and not dice[1]
         else Dice.from_message(*dice)
