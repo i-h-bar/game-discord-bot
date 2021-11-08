@@ -2,6 +2,7 @@ import re
 
 from edge.dice.command_map import dice_map
 from edge.dice.roller import roll_edge_dice
+from table_top.constants import DICE_REGEX
 from table_top.dice import Dice
 
 
@@ -28,11 +29,14 @@ def get_roll(message):
 
 
 def roll_classic(content):
+    found_dice = re.findall(DICE_REGEX, content.replace(" ", ""))[:-1]
     dice_pool = [
-        int(dice) if dice.strip().isdigit() else Dice.from_message(dice) for dice in content.split("+")
+        int(dice[0]) if dice[0].lstrip("-").isdigit() and not dice[1]
+        else Dice.from_message(*dice)
+        for dice in found_dice
     ]
 
     return (
         f"`{' + '.join(repr(dice) for dice in dice_pool)}` = "
         f"{' + '.join(str(dice) for dice in dice_pool)} = {sum(dice_pool)}"
-    )
+    ).replace("+ -", "- ")

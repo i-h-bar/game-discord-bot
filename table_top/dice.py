@@ -1,6 +1,8 @@
 import random
 import re
 
+from table_top.constants import DICE_REGEX
+
 
 class Dice:
     def __init__(
@@ -16,6 +18,11 @@ class Dice:
         self.keep_high = int(keep_high) if keep_high else None
         self.keep_low = int(keep_low) if keep_low else None
         self.great_weapon_fighting = bool(great_weapon_fighting)
+        self.sign = 1
+
+        if self.num_dice < 0:
+            self.num_dice = -self.num_dice
+            self.sign = -1
 
         self.results = []
         self.rejected_rolls = []
@@ -32,7 +39,7 @@ class Dice:
         else:
             suffix = ""
 
-        return f"{self.num_dice}d{self.dice_type}{suffix}"
+        return f"{self.sign * self.num_dice}d{self.dice_type}{suffix}"
 
     def __str__(self):
         if self.keep_high or self.keep_low:
@@ -48,7 +55,7 @@ class Dice:
 
             return f"({formatted_rolls})"
         else:
-            return f"({' + '.join(str(num) for num in self.results)})"
+            return f"{'-' if self.sign == -1 else ''}({' + '.join(str(num) for num in self.results)})"
 
     def __radd__(self, other):
         if isinstance(other, Dice):
@@ -59,10 +66,9 @@ class Dice:
             raise ValueError("Other must be Dice or int type to add.")
 
     @classmethod
-    def from_message(cls, message: str):
-        num, die, kh, kl, gwf = re.match(r"(:?\d+)?d(:?\d+)?(:?kh\d+)?(:?kl\d+)?(:?gwf)?", message.strip()).groups()
+    def from_message(cls, num, die, kh, kl, gwf):
 
-        if num is None:
+        if not num:
             num = 1
         if kh:
             kh = kh.lstrip("kh")
@@ -73,7 +79,7 @@ class Dice:
 
     @property
     def total(self):
-        return sum(self.results)
+        return self.sign * sum(self.results)
 
     def roll(self):
         rolls = sorted(random.randint(1, self.dice_type) for _ in range(self.num_dice))
