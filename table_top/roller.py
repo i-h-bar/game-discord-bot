@@ -10,6 +10,9 @@ from table_top.dice import Dice
 def get_roll(message):
     content = message.content
 
+    if len(content) > 100:
+        raise ValueError("Content too large")
+
     for key in dice_map.keys():
         if key in content:
             return roll_edge_dice(message)
