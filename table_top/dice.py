@@ -16,6 +16,10 @@ class Dice:
         self.dice_type = int(dice_type)
         self.raw_num = num_dice
         self.num_dice = int(self.raw_num) if self.raw_num else 1
+
+        if self.num_dice > 100:
+            raise ValueError(f"Number of dice too high {self.num_dice}")
+
         self.keep_high = int(keep_high) if keep_high else None
         self.keep_low = int(keep_low) if keep_low else None
         self.great_weapon_fighting = bool(great_weapon_fighting)

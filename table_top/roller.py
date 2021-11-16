@@ -21,7 +21,7 @@ def get_roll(message):
                 roll_classic(dice.lstrip('[').rstrip(']'))
                 for group in content.split(",")
                 for num, dice in re.findall(r'(\d+)(\[.*])', group.strip())
-                for _ in range(int(num))
+                for _ in range(int(num)) if int(num) < 51
             )
             return f"\n{message}"
 
