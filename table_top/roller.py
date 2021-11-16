@@ -23,6 +23,10 @@ def get_roll(message):
                 for num, dice in re.findall(r'(\d+)(\[.*])', group.strip())
                 for _ in range(int(num)) if int(num) < 51
             )
+
+            if not message:
+                raise ValueError("No dice groups were rolled")
+
             return f"\n{message}"
 
         else:
