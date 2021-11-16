@@ -14,7 +14,8 @@ class Dice:
             great_weapon_fighting: str = None
     ):
         self.dice_type = int(dice_type)
-        self.num_dice = int(num_dice)
+        self.raw_num = num_dice
+        self.num_dice = int(self.raw_num) if self.raw_num else 1
         self.keep_high = int(keep_high) if keep_high else None
         self.keep_low = int(keep_low) if keep_low else None
         self.great_weapon_fighting = bool(great_weapon_fighting)
@@ -67,9 +68,6 @@ class Dice:
 
     @classmethod
     def from_message(cls, num, die, kh, kl, gwf):
-
-        if not num:
-            num = 1
         if kh:
             kh = kh.lstrip("kh")
         if kl:
@@ -80,6 +78,10 @@ class Dice:
     @property
     def total(self):
         return self.sign * sum(self.results)
+
+    @property
+    def raw(self):
+        return f"{self.raw_num}d{self.dice_type}"
 
     def roll(self):
         rolls = sorted(random.randint(1, self.dice_type) for _ in range(self.num_dice))
