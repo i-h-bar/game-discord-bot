@@ -1,9 +1,10 @@
 import asyncio
 import io
 import os
+import re
 
 import discord
-from discord import Message
+from discord import Message, DMChannel
 from discord.ext import commands
 
 from dnd.api import get_spell
@@ -16,6 +17,7 @@ from table_top.roller import get_roll
 from utils.discord import determine_send_function
 from utils.help import HELP_MESSAGE
 from wow.parse import item_look_up
+from wow.wrath.polling_collector import collect_result
 
 bot = commands.Bot(command_prefix="/")
 
@@ -29,6 +31,9 @@ async def on_ready():
 async def on_message(message: Message):
     if message.author == bot.user:
         return
+
+    if not isinstance(message.channel, DMChannel) and "wrath-class-poll" in message.channel.name:
+        await collect_result(message)
 
     send_message = determine_send_function(message)
 
