@@ -17,10 +17,9 @@ async def collect_result(message: Message):
 
     else:
         nums = [int(num) for num in re.findall(r"[\d]+", message.content)]
-        if nums != [num for num in range(len(nums))]:
+        if nums != [num for num in range(1, len(nums) + 1)]:
             await message.author.send(
-                "Failed to submit choice as message did not follow the required format:"
-                "\n\n1. Choice One\n2. Choice Two\n3. Choice Three\netc."
+                f"Your numbers are not in order dingus:\n\n{content}"
             )
         else:
             poll_result_channel = [
