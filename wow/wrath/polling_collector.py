@@ -30,5 +30,8 @@ async def collect_result(message: Message):
                 if str(message.author.id) in past_message.content:
                     await past_message.delete()
 
-            await poll_result_channel.send(f"Polling ID: {message.author.id}\n{message.author.nick}:\n{content}")
-            await message.author.send(f"Confirmation of choice submission:\n\n{content}\n{nums[-1] + 1}. Mega Chad")
+            await poll_result_channel.send(
+                f"Polling ID: {message.author.id}"
+                f"\n{message.author.nick if message.author.nick is not None else message.author.name}:\n{content}"
+            )
+            await message.author.send(f"Confirmation of choice submission:\n\n{content}\n{nums[-1] + 1}. Giga Chad")
