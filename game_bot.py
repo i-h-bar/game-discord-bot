@@ -83,7 +83,7 @@ async def on_raw_reaction_add(reaction: RawReactionActionEvent):
             role = discord.utils.get(reaction.member.guild.roles, name="Tank")
             await reaction.member.add_roles(role)
         if reaction.emoji.name == "ranged":
-            role = discord.utils.get(reaction.member.guild.roles, name="Ranged")
+            role = discord.utils.get(reaction.member.guild.roles, name="Range")
             await reaction.member.add_roles(role)
         if reaction.emoji.name == "healer":
             role = discord.utils.get(reaction.member.guild.roles, name="Healer")
