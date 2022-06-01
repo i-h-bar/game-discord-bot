@@ -4,7 +4,7 @@ import os
 import re
 
 import discord
-from discord import Message, DMChannel
+from discord import Message, DMChannel, Reaction, Member, RawReactionActionEvent, TextChannel
 from discord.ext import commands
 
 from dnd.api import get_spell
@@ -73,6 +73,24 @@ async def on_message(message: Message):
 
     elif message.content.strip().lower() == "good bot":
         await send_message(f"{message.author.mention} Thanks!")
+
+
+@bot.event
+async def on_raw_reaction_add(reaction: RawReactionActionEvent):
+    channel = bot.get_channel(reaction.channel_id)
+    if "role-assignment" in channel.name:
+        if reaction.emoji.name == "tank":
+            role = discord.utils.get(reaction.member.guild.roles, name="Tank")
+            await reaction.member.add_roles(role)
+        if reaction.emoji.name == "ranged":
+            role = discord.utils.get(reaction.member.guild.roles, name="Ranged")
+            await reaction.member.add_roles(role)
+        if reaction.emoji.name == "healer":
+            role = discord.utils.get(reaction.member.guild.roles, name="Healer")
+            await reaction.member.add_roles(role)
+        if reaction.emoji.name == "melee":
+            role = discord.utils.get(reaction.member.guild.roles, name="Melee")
+            await reaction.member.add_roles(role)
 
 
 bot.run(os.getenv("game_bot_token"))
