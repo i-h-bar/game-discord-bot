@@ -16,7 +16,7 @@ REPLACE_CHAR = "'"
 
 async def item_look_up(message: str):
     return "\n".join(
-        [make_url(*(await wow_fuzzy_match(item_name))) for item_name in re.findall(r"{[a-zA-Z0-9,\-.' ]+}", message)]
+        [make_url(*(await wow_fuzzy_match(item_name))) for item_name in re.findall(r"{{[a-zA-Z0-9,\-.' ]+}}", message)]
     )
 
 

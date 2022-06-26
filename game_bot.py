@@ -62,7 +62,7 @@ async def on_message(message: Message):
             )
             await asyncio.sleep(0.05)
 
-    elif "{" in message.content and "}" in message.content:
+    elif "{{" in message.content and "}}" in message.content:
         await send_message(await item_look_up(message.content))
 
     elif message.content.startswith("/h"):
