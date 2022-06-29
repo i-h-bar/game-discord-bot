@@ -4,7 +4,7 @@ import numpy as np
 
 setup(
     ext_modules=cythonize(
-        ["utils/levensteine.pyx"], compiler_directives={'language_level': "3"}
+        ["utils/string_matching.pyx"], compiler_directives={'language_level': "3"}
     ),
     include_dirs=[np.get_include()]
 )
