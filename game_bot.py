@@ -1,10 +1,24 @@
+import sys
+
+from setuptools import setup
+from Cython.Build import cythonize
+import numpy as np
+
+sys.argv.append("build_ext")
+
+setup(
+    ext_modules=cythonize(
+        ["utils/string_matching.pyx"], compiler_directives={'language_level': "3"}
+    ),
+    include_dirs=[np.get_include()]
+)
+
 import asyncio
 import io
 import os
-import re
 
 import discord
-from discord import Message, DMChannel, Reaction, Member, RawReactionActionEvent, TextChannel
+from discord import Message, DMChannel, RawReactionActionEvent
 from discord.ext import commands
 
 from dnd.api import get_spell
