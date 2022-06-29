@@ -5,6 +5,7 @@ from Cython.Build import cythonize
 import numpy as np
 
 sys.argv.append("build_ext")
+sys.argv.append("--inplace")
 
 setup(
     ext_modules=cythonize(
