@@ -1,15 +1,12 @@
 import difflib
-import json
 import re
 
-from Levenshtein import distance
+from utils.dev.measurement import async_time_it
+from utils.levensteine import distance
 from cache import AsyncTTL
 
 from utils.aio.wrappers import asyncify
-
-
-with open("wow/data/items.json", "r") as in_file:
-    wow_items = json.load(in_file)
+from wow.data.items import wow_items
 
 REPLACE_CHAR = "'"
 
@@ -24,6 +21,7 @@ def make_url(item_id: int, item_name: str):
     return f"https://tbc.wowhead.com/item={item_id}/{'-'.join(item_name.replace(REPLACE_CHAR, '').lower().split())}"
 
 
+@async_time_it
 @AsyncTTL(time_to_live=86400)
 @asyncify
 def wow_fuzzy_match(item_name: str):
