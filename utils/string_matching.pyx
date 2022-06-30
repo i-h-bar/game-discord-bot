@@ -31,11 +31,11 @@ cdef int _distance(str string_1, str string_2):
     return matrix[-1, -1]
 
 
-def longest_sequence(string_1: str, string_2: str) -> int:
-    return _longest_sequence(string_1, string_2)
+def consecutive_sequence_score(string_1: str, string_2: str) -> int:
+    return _consecutive_sequence_score(string_1, string_2)
 
 
-cdef int _longest_sequence(str string_1, str string_2):
+cdef int _consecutive_sequence_score(str string_1, str string_2):
     cdef int x
     cdef int y
     cdef object[:, :] matrix = np.zeros((len(string_1) + 1, len(string_2) + 1), dtype=object)

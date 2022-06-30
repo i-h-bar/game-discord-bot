@@ -4,8 +4,8 @@ from string import punctuation, whitespace
 from cache import AsyncTTL
 
 from utils.dev.measurement import async_time_it
-from utils.string_matching import longest_sequence
-from wow.data.items import wow_items
+from utils.string_matching import consecutive_sequence_score
+from wow.data.items import wow_items, item_starting_letters
 
 
 async def item_look_up(message: str):
@@ -29,13 +29,13 @@ async def wow_fuzzy_match(item_name: str):
     try:
         item_id = wow_items[item_name]
     except KeyError:
-        items = (item for item in wow_items.keys() if item[0: 2] == item_name[0: 2])
+        items = (item for item in wow_items.keys() if item_name[:2] in item_starting_letters[item])
 
         max_item = ""
         max_item_match = 0
 
         for item in items:
-            if (num := longest_sequence(item_name, item)) > max_item_match:
+            if (num := consecutive_sequence_score(item_name, item)) > max_item_match:
                 max_item = item
                 max_item_match = num
 

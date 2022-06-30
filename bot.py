@@ -1,19 +1,3 @@
-import sys
-
-from setuptools import setup
-from Cython.Build import cythonize
-import numpy as np
-
-sys.argv.append("build_ext")
-sys.argv.append("--inplace")
-
-setup(
-    ext_modules=cythonize(
-        ["utils/string_matching.pyx"], compiler_directives={'language_level': "3"}
-    ),
-    include_dirs=[np.get_include()]
-)
-
 import asyncio
 import io
 import os
@@ -33,6 +17,7 @@ from utils.discord import determine_send_function
 from utils.help import HELP_MESSAGE
 from wow.parse import item_look_up
 from wow.wrath.polling_collector import collect_result
+
 
 bot = commands.Bot(command_prefix="/")
 
@@ -108,4 +93,9 @@ async def on_raw_reaction_add(reaction: RawReactionActionEvent):
             await reaction.member.add_roles(role)
 
 
-bot.run(os.getenv("game_bot_token"))
+def run():
+    bot.run(os.getenv("game_bot_token"))
+
+
+if __name__ == "__main__":
+    run()
