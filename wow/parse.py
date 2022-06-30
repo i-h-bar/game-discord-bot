@@ -22,7 +22,6 @@ def normalise(item: str) -> str:
     return re.sub(f"[{punctuation + whitespace}]+", " ", item).strip().lower()
 
 
-@async_time_it
 @AsyncTTL(time_to_live=86400)
 async def wow_fuzzy_match(item_name: str):
     item_name = normalise(item_name)
