@@ -1,10 +1,9 @@
 import asyncio
 import io
 import os
-import re
 
 import discord
-from discord import Message, DMChannel, Reaction, Member, RawReactionActionEvent, TextChannel
+from discord import Message, DMChannel, RawReactionActionEvent
 from discord.ext import commands
 
 from dnd.api import get_spell
@@ -18,6 +17,7 @@ from utils.discord import determine_send_function
 from utils.help import HELP_MESSAGE
 from wow.parse import item_look_up
 from wow.wrath.polling_collector import collect_result
+
 
 bot = commands.Bot(command_prefix="/")
 
@@ -93,4 +93,9 @@ async def on_raw_reaction_add(reaction: RawReactionActionEvent):
             await reaction.member.add_roles(role)
 
 
-bot.run(os.getenv("game_bot_token"))
+def run():
+    bot.run(os.getenv("game_bot_token"))
+
+
+if __name__ == "__main__":
+    run()
