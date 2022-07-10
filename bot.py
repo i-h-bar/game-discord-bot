@@ -1,10 +1,12 @@
 import asyncio
 import io
 import os
+from base64 import b64decode
 
 import discord
 from discord import Message, DMChannel, RawReactionActionEvent
 from discord.ext import commands
+from tortoise import Tortoise
 
 from dnd.api import get_spell
 from dnd.formatting.message import format_spell
@@ -15,6 +17,7 @@ from table_top.coin import flip_coin
 from table_top.roller import get_roll
 from utils.discord import determine_send_function
 from utils.help import HELP_MESSAGE
+from utils.role_assignment import assign_from_reaction
 from wow.parse import item_look_up
 from wow.wrath.polling_collector import collect_result
 
@@ -24,6 +27,11 @@ bot = commands.Bot(command_prefix="/")
 
 @bot.event
 async def on_ready():
+    await Tortoise.init(
+        db_url='sqlite://wow/data/items.sqlite3',
+        modules={'models': ['wow.data.models']}
+    )
+
     print("Game bot initialised")
 
 
@@ -63,13 +71,20 @@ async def on_message(message: Message):
             await asyncio.sleep(0.05)
 
     elif "{{" in message.content and "}}" in message.content:
-        await send_message(await item_look_up(message.content))
+        async for tooltip, url, name in item_look_up(message.content):
+            if tooltip is not None:
+                await send_message(f"<{url}>", file=discord.File(io.BytesIO(tooltip), f"{name}.png"))
+            else:
+                await send_message(url)
 
     elif message.content.startswith("/h"):
         if "edge" in message.content:
             await send_message(f"{message.author.mention}\n{EDGE_HELP}")
         else:
             await send_message(f"{message.author.mention}\n{HELP_MESSAGE}")
+
+    elif message.content.startswith("/who"):
+        x = 0
 
     elif message.content.strip().lower() == "good bot":
         await send_message(f"{message.author.mention} Thanks!")
@@ -79,18 +94,7 @@ async def on_message(message: Message):
 async def on_raw_reaction_add(reaction: RawReactionActionEvent):
     channel = bot.get_channel(reaction.channel_id)
     if "role-assignment" in channel.name:
-        if reaction.emoji.name == "tank":
-            role = discord.utils.get(reaction.member.guild.roles, name="Tank")
-            await reaction.member.add_roles(role)
-        if reaction.emoji.name == "ranged":
-            role = discord.utils.get(reaction.member.guild.roles, name="Ranged")
-            await reaction.member.add_roles(role)
-        if reaction.emoji.name == "healer":
-            role = discord.utils.get(reaction.member.guild.roles, name="Healer")
-            await reaction.member.add_roles(role)
-        if reaction.emoji.name == "melee":
-            role = discord.utils.get(reaction.member.guild.roles, name="Melee")
-            await reaction.member.add_roles(role)
+        await assign_from_reaction(reaction)
 
 
 def run():

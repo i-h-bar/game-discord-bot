@@ -1,17 +1,32 @@
 import re
+from base64 import b64decode
+from functools import lru_cache
 from string import punctuation, whitespace
 
 from cache import AsyncTTL
+from tortoise.exceptions import DoesNotExist
 
-from utils.dev.measurement import async_time_it
+from utils.dev.measurement import time_it
 from utils.string_matching import consecutive_sequence_score
-from wow.data.items import wow_items, item_starting_letters
+from wow.data.items import wow_items, item_starting_letters, wow_items_extra
+from wow.data.models import Items
+
+
+@lru_cache()
+def decode_png(b64_string: str) -> bytes:
+    return b64decode(b64_string.encode())
 
 
 async def item_look_up(message: str):
-    return "\n".join(
-        [make_url(*(await wow_fuzzy_match(item_name))) for item_name in re.findall(r"{{}}|{{[a-zA-Z0-9,\-.' ]+}}", message)]
-    )
+    items = [await wow_fuzzy_match(item_name) for item_name in re.findall(r"{{}}|{{[a-zA-Z0-9,\-.' ]+}}", message)]
+
+    for item_id, item_name in items:
+        try:
+            tooltip = (await Items.get(id=item_id)).tooltip
+        except DoesNotExist:
+            yield None, make_url(item_id, item_name), item_name
+        else:
+            yield decode_png(tooltip), make_url(item_id, item_name), item_name
 
 
 def make_url(item_id: int, item_name: str):
