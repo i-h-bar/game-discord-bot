@@ -5,3 +5,4 @@ Cython~=0.29.30
 numpy==1.23.0
 python-Levenshtein==0.12.2
 setuptools==62.6.0
+tortoise-orm==0.19.2
