@@ -15,6 +15,7 @@ from mtg.scryfall import search_scryfall
 from table_top.calculator import calculate_from_message
 from table_top.coin import flip_coin
 from table_top.roller import get_roll
+from utils.dev.measurement import async_time_it
 from utils.discord import determine_send_function
 from utils.help import HELP_MESSAGE
 from utils.role_assignment import assign_from_reaction
@@ -36,6 +37,7 @@ async def on_ready():
 
 
 @bot.event
+@async_time_it
 async def on_message(message: Message):
     if message.author == bot.user:
         return

@@ -45,4 +45,4 @@ cdef int _consecutive_sequence_score(str string_1, str string_2):
             if string_1[x - 1] == string_2[y - 1]:
                 matrix[x, y] = matrix[x - 1, y - 1] + 1
 
-    return np.sum(matrix)
+    return np.sum(matrix) / len(string_2)
