@@ -141,4 +141,4 @@ fix_tp.py
 *extra_item_info.json
 *.png
 
-*.sqlite3
+#*.sqlite3
