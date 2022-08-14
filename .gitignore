@@ -142,3 +142,4 @@ fix_tp.py
 *.png
 
 *.sqlite3
+*.lprof

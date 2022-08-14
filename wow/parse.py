@@ -2,11 +2,12 @@ import re
 from string import punctuation, whitespace
 from typing import Optional, AsyncIterable
 
+from Levenshtein import distance
 from cache import AsyncTTL
 from tortoise.exceptions import DoesNotExist
 
 from utils.string_matching import consecutive_sequence_score
-from wow.data.items import wow_items, item_starting_letters, starting_letter_groups
+from wow.data.items import wow_items, starting_letter_groups
 from wow.data.models import Items
 
 
@@ -38,21 +39,19 @@ async def matching_start_items(item_name: str) -> list[str]:
 
 
 @AsyncTTL(time_to_live=86400)
+@profile
 async def wow_fuzzy_match(item_name: str):
     item_name = normalise(item_name)
     try:
         item_id = wow_items[item_name]
     except KeyError:
-        max_item = ""
-        max_item_match = 0
+        scores = {
+            consecutive_sequence_score(item_name, item): item
+            for item in (item for item in await matching_start_items(item_name) if distance(item_name, item) < 10)
+        }
 
-        for item in await matching_start_items(item_name):
-            if (num := (consecutive_sequence_score(item_name, item))) > max_item_match:
-                max_item = item
-                max_item_match = num
-
-        if max_item:
-            item_name = max_item
+        if scores:
+            item_name = scores[max(scores.keys())]
         else:
             item_name = "dirge"
 
