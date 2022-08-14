@@ -1,6 +1,5 @@
 import asyncio
 import io
-import json
 import os
 
 import discord
@@ -20,7 +19,7 @@ from utils.discord import determine_send_function
 from utils.feedback import open_feedback_session, take_feedback, clear_expired_feedback_sessions
 from utils.help import HELP_MESSAGE
 from utils.role_assignment import assign_from_reaction
-from wow.data.items import starting_letter_groups, wow_items
+from wow.data.items import starting_letter_groups
 from wow.parse import item_look_up
 from wow.professions import profession_map
 
@@ -38,7 +37,7 @@ bot = Bot(command_prefix="/")
 @bot.event
 async def on_ready():
     await Tortoise.init(
-        db_url='sqlite://wow/data/items.sqlite3',
+        db_url=os.getenv("DATABASE_URL"),
         modules={'models': ['wow.data.models']}
     )
     await starting_letter_groups()
