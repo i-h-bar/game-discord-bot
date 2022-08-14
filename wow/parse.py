@@ -39,7 +39,6 @@ async def matching_start_items(item_name: str) -> list[str]:
 
 
 @AsyncTTL(time_to_live=86400)
-@profile
 async def wow_fuzzy_match(item_name: str):
     item_name = normalise(item_name)
     try:
