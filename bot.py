@@ -1,5 +1,6 @@
 import asyncio
 import io
+import json
 import os
 
 import discord
@@ -19,10 +20,19 @@ from utils.discord import determine_send_function
 from utils.feedback import open_feedback_session, take_feedback, clear_expired_feedback_sessions
 from utils.help import HELP_MESSAGE
 from utils.role_assignment import assign_from_reaction
+from wow.data.items import starting_letter_groups, wow_items
 from wow.parse import item_look_up
 from wow.professions import profession_map
 
-bot = commands.Bot(command_prefix="/")
+
+class Bot(commands.Bot):
+    async def close(self):
+        await Tortoise.close_connections()
+        await super().close()
+        print("Bot Closed Down")
+
+
+bot = Bot(command_prefix="/")
 
 
 @bot.event
@@ -31,6 +41,7 @@ async def on_ready():
         db_url='sqlite://wow/data/items.sqlite3',
         modules={'models': ['wow.data.models']}
     )
+    await starting_letter_groups()
 
     print("Game bot initialised")
 
@@ -121,6 +132,11 @@ async def on_raw_reaction_add(reaction: RawReactionActionEvent):
     channel = bot.get_channel(reaction.channel_id)
     if "role-assignment" in channel.name:
         await assign_from_reaction(reaction)
+
+
+@bot.event
+async def on_member_join(member):
+    await member.send("Welcome!")
 
 
 def run():
