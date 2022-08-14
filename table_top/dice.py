@@ -1,7 +1,4 @@
 import random
-import re
-
-from table_top.constants import DICE_REGEX
 
 
 class Dice:
