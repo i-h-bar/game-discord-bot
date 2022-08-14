@@ -31,9 +31,9 @@ def normalise(item: str) -> str:
     return re.sub(f"[{punctuation + whitespace}]+", " ", item).strip().lower()
 
 
-async def matching_start_items(item_name: str) -> list[str]:
+def matching_start_items(item_name: str) -> list[str]:
     try:
-        return (await starting_letter_groups())[item_name[:2]]
+        return starting_letter_groups[item_name[:2]]
     except (KeyError, IndexError):
         return []
 
@@ -46,7 +46,7 @@ async def wow_fuzzy_match(item_name: str):
     except KeyError:
         scores = {
             consecutive_sequence_score(item_name, item): item
-            for item in (item for item in await matching_start_items(item_name) if distance(item_name, item) < 10)
+            for item in (item for item in matching_start_items(item_name) if distance(item_name, item) < 10)
         }
 
         if scores:
