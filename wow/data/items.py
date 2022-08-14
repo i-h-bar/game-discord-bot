@@ -1,11 +1,8 @@
 import json
 from collections import defaultdict
 
-from cache import AsyncLRU
-
 with open("wow/data/items.json") as in_json:
     wow_items = json.load(in_json)
-
 
 item_starting_letters = {item: set(word[:2] for word in item.split()) for item in wow_items}
 

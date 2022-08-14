@@ -1,9 +1,9 @@
-import sys
 import logging
+import sys
 
-from setuptools import setup
-from Cython.Build import cythonize
 import numpy as np
+from Cython.Build import cythonize
+from setuptools import setup
 
 
 def build():

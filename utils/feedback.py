@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 
 from discord import Message
 
-
 open_feedback_sessions = {}
 
 
