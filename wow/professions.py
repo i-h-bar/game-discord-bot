@@ -8,13 +8,18 @@ from wow.data.models import Items
 from wow.parse import wow_fuzzy_match
 
 
-async def get_profession(item_id: int) -> tuple[str, bytes] | tuple[None, None]:
+async def get_profession(name: str) -> tuple[str, bytes] | tuple[None, None]:
     try:
-        item = await Items.get(id=item_id)
+        items = await Items.filter(name=name)
     except DoesNotExist:
         return None, None
     else:
-        return item.profession, item.tooltip
+        profession_filter = tuple(item for item in items if item.profession is not None)
+
+        if len(profession_filter) == 1:
+            return profession_filter[0].profession, profession_filter[0].tooltip
+        else:
+            return None, items[0].tooltip
 
 
 async def profession_map(message: Message) -> tuple[dict | None, list[tuple[bytes, str]] | None]:
@@ -24,7 +29,7 @@ async def profession_map(message: Message) -> tuple[dict | None, list[tuple[byte
     professions = defaultdict(list)
     tooltips = []
     for item_id, item_name in items:
-        profession, tooltip = await get_profession(item_id)
+        profession, tooltip = await get_profession(item_name)
 
         if profession is None and tooltip is None:
             return None, None
