@@ -20,7 +20,7 @@ from utils.feedback import open_feedback_session, take_feedback, clear_expired_f
 from utils.help import HELP_MESSAGE
 from utils.role_assignment import assign_from_reaction
 from wow.parse import item_look_up
-from wow.professions import profession_map
+from wow.professions import professions_reply
 
 
 class Bot(commands.Bot):
@@ -100,25 +100,13 @@ async def on_message(message: Message):
             await send_message(f"{message.author.mention}\n{HELP_MESSAGE}")
 
     elif message.content.startswith("/who"):
-        reply = ""
-        professions, tooltips = await profession_map(message)
-
-        if professions is None and tooltips is None:
-            return
-
-        for profession, wanted_items in professions.items():
-            role = discord.utils.get(message.guild.roles, name=profession)
-            if role is not None:
-                reply += f"Hey there {role.mention} can you make [{', '.join(f'**{item.title()}**' for item in wanted_items)}] for {message.author.mention}\n"
-
-        if "not prof crafted" in professions:
-            reply += f"Sorry [{', '.join(f'**{item.title()}**' for item in professions['not prof crafted'])}] can't be crafted by a profession :("
+        reply, tooltips = await professions_reply(message)
 
         if reply:
             await send_message(reply)
 
-        for tooltip, name in tooltips:
-            await send_message(file=discord.File(io.BytesIO(tooltip), f"{name}.png"))
+            for tooltip, name in tooltips:
+                await send_message(file=discord.File(io.BytesIO(tooltip), f"{name}.png"))
 
     elif message.content.strip().lower() == "good bot":
         await send_message(f"{message.author.mention} Thanks!")

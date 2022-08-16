@@ -4,7 +4,7 @@ from operator import itemgetter
 from string import punctuation, whitespace
 from typing import Optional, AsyncIterable
 
-from Levenshtein import distance
+from utils.string_matching import distance
 from cache import AsyncTTL
 from tortoise.exceptions import DoesNotExist
 
@@ -45,7 +45,7 @@ def matching_start_items(item_name: str) -> list[str]:
         return []
 
 
-@AsyncTTL(time_to_live=86400)
+# @AsyncTTL(time_to_live=86400)
 async def wow_fuzzy_match(item_name: str):
     item_name = normalise(item_name)
     try:
