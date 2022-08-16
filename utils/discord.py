@@ -1,12 +1,12 @@
 from typing import Callable, Awaitable
 
-from discord import TextChannel, Message
+from discord import TextChannel, Message, VoiceChannel
 
 
 def determine_send_function(message: Message):
     channel = message.channel
 
-    if message.content.startswith("!DM"):
+    if message.content.startswith("!DM") or isinstance(channel, VoiceChannel):
         message.content = message.content.lstrip("!DM ")
         return message.author.send
     elif message.content.startswith("!hide"):
