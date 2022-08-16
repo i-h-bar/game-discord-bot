@@ -1,4 +1,6 @@
+import asyncio
 import re
+from operator import itemgetter
 from string import punctuation, whitespace
 from typing import Optional, AsyncIterable
 
@@ -6,9 +8,14 @@ from Levenshtein import distance
 from cache import AsyncTTL
 from tortoise.exceptions import DoesNotExist
 
-from utils.string_matching import consecutive_sequence_score
+from utils.strings import async_sequence_score
 from wow.data.items import wow_items, starting_letter_groups
 from wow.data.models import Items
+
+
+@AsyncTTL(time_to_live=86400)
+async def get_item_tooltip(item_id: int) -> bytes:
+    return (await Items.get(id=item_id)).tooltip
 
 
 async def item_look_up(message: str) -> AsyncIterable[tuple[Optional[bytes], str, str]]:
@@ -16,7 +23,7 @@ async def item_look_up(message: str) -> AsyncIterable[tuple[Optional[bytes], str
 
     for item_id, item_name in items:
         try:
-            tooltip = (await Items.get(id=item_id)).tooltip
+            tooltip = await get_item_tooltip(item_id)
         except DoesNotExist:
             yield None, make_url(item_id, item_name), item_name
         else:
@@ -33,7 +40,7 @@ def normalise(item: str) -> str:
 
 def matching_start_items(item_name: str) -> list[str]:
     try:
-        return starting_letter_groups[item_name[:2]]
+        return starting_letter_groups[item_name[:3]]
     except (KeyError, IndexError):
         return []
 
@@ -44,13 +51,15 @@ async def wow_fuzzy_match(item_name: str):
     try:
         item_id = wow_items[item_name]
     except KeyError:
-        scores = {
-            consecutive_sequence_score(item_name, item): item
-            for item in (item for item in matching_start_items(item_name) if distance(item_name, item) < 10)
-        }
+        scores = await asyncio.gather(
+            *(
+                async_sequence_score(item_name, item)
+                for item in matching_start_items(item_name) if distance(item_name, item) < 7
+            )
+        )
 
         if scores:
-            item_name = scores[max(scores.keys())]
+            item_name = max(scores, key=itemgetter(1))[0]
         else:
             item_name = "dirge"
 

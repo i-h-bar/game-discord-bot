@@ -4,7 +4,9 @@ from collections import defaultdict
 with open("wow/data/items.json") as in_json:
     wow_items = json.load(in_json)
 
-item_starting_letters = {item: set(word[:2] for word in item.split()) for item in wow_items}
+item_starting_letters = {
+    item: set(word[:3] for word in item.split()) for item in wow_items
+}
 
 starting_letter_groups = defaultdict(list)
 
