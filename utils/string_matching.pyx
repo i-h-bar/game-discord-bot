@@ -4,7 +4,6 @@ cimport numpy as np
 np.import_array()
 
 
-
 def distance(string_1: str, string_2: str) -> int:
     return _distance(string_1, string_2)
 

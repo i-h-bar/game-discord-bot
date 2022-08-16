@@ -1,12 +1,15 @@
 import asyncio
 import difflib
 
-from Levenshtein import distance
+from cache import AsyncTTL
+
+from utils.string_matching import distance
 
 from dnd.constants import DND_API, SPELL
 from utils.aio.requests import async_get
 
 
+@AsyncTTL(time_to_live=86400)
 async def get_spell(spell_name):
     spell_info = await async_get(f"{DND_API}{SPELL}?name={'+'.join(spell_name.split())}")
 

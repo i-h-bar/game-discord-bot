@@ -6,4 +6,3 @@ numpy==1.23.2
 setuptools==64.0.3
 tortoise-orm==0.19.2
 asyncpg==0.26.0
-python-Levenshtein==0.12.2
