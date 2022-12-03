@@ -3,24 +3,23 @@ from collections import defaultdict
 
 import discord
 from discord import Message
-from tortoise.exceptions import DoesNotExist
 
-from wow.data.models import Items
 from wow.parse import wow_fuzzy_match
 
 
 async def get_profession(item_id: int) -> tuple[str, bytes] | tuple[None, None]:
-    try:
-        items = await Items.filter(id=item_id)
-    except DoesNotExist:
-        return None, None
-    else:
-        profession_filter = tuple(item for item in items if item.profession is not None)
-
-        if len(profession_filter) == 1:
-            return profession_filter[0].profession, profession_filter[0].tooltip
-        else:
-            return None, items[0].tooltip
+    raise NotImplementedError
+    # try:
+    #     items = await Items.filter(id=item_id)
+    # except DoesNotExist:
+    #     return None, None
+    # else:
+    #     profession_filter = tuple(item for item in items if item.profession is not None)
+    #
+    #     if len(profession_filter) == 1:
+    #         return profession_filter[0].profession, profession_filter[0].tooltip
+    #     else:
+    #         return None, items[0].tooltip
 
 
 async def profession_map(message: Message) -> tuple[dict | None, list[tuple[bytes, str]] | None]:
