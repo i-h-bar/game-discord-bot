@@ -9,11 +9,11 @@ from edge.dice.sides import SUCCESS, ADVANTAGE, TRIUMPH, FAILURE, THREAT, DESPAI
     BLANK
 
 
-def roll_edge_dice(message: Message) -> str:
+def roll_edge_dice(dice_command: str) -> str:
     reply = ""
 
     dice_rolls = defaultdict(list)
-    for dice_roll in message.content.split("+"):
+    for dice_roll in dice_command.split("+"):
         try:
             times = int(re.findall(r'\d+', dice_roll)[0])
         except IndexError:
@@ -24,7 +24,7 @@ def roll_edge_dice(message: Message) -> str:
         try:
             die = dice_map[die]
         except KeyError:
-            return f"{message.author.mention} the die '{die}' was not found in the dice bag :("
+            return f"The die '{die}' was not found in the dice bag :("
         else:
             for _ in range(times):
                 dice_rolls[die.name].append(die())
