@@ -5,7 +5,6 @@ import os
 import discord
 from discord import Message, RawReactionActionEvent, DMChannel
 from discord.ext import commands
-from tortoise import Tortoise
 
 from dnd.api import get_spell
 from dnd.formatting.message import format_spell
@@ -14,18 +13,21 @@ from mtg.scryfall import search_scryfall
 from table_top.calculator import calculate_from_message
 from table_top.coin import flip_coin
 from table_top.roller import get_roll
+from utils.database import db
 from utils.dev.measurement import async_time_it
 from utils.discord import determine_send_function
 from utils.feedback import open_feedback_session, take_feedback, clear_expired_feedback_sessions
 from utils.help import HELP_MESSAGE
 from utils.role_assignment import assign_from_reaction
-from wow.parse import item_look_up
+from wow.data.items import item_starting_letter_groups
+from wow.data.spells import spell_starting_letter_groups
+from wow.parse import wow_look_up
 from wow.professions import professions_reply
 
 
 class Bot(commands.Bot):
     async def close(self):
-        await Tortoise.close_connections()
+        await db.close()
         await super().close()
         print("Bot Closed Down")
 
@@ -35,11 +37,9 @@ bot = Bot(command_prefix="/")
 
 @bot.event
 async def on_ready():
-    await Tortoise.init(
-        db_url=os.getenv("DATABASE_URL"),
-        modules={'models': ['wow.data.models']}
-    )
-
+    await db.connect()
+    await item_starting_letter_groups()
+    await spell_starting_letter_groups()
     print("Game bot initialised")
 
 
@@ -87,7 +87,7 @@ async def on_message(message: Message):
             await asyncio.sleep(0.05)
 
     elif "{{" in message.content and "}}" in message.content and not message.content.startswith("/who"):
-        async for tooltip, url, name in item_look_up(message.content):
+        async for tooltip, url, name in wow_look_up(message.content):
             if tooltip is not None:
                 await send_message(f"<{url}>", file=discord.File(io.BytesIO(tooltip), f"{name}.png"))
             else:

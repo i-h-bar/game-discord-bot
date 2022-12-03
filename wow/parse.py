@@ -1,68 +1,76 @@
 import asyncio
 import re
 from operator import itemgetter
-from string import punctuation, whitespace
+from string import punctuation
 from typing import Optional, AsyncIterable
 
-from utils.string_matching import distance
 from cache import AsyncTTL
-from tortoise.exceptions import DoesNotExist
 
-from utils.strings import async_sequence_score
-from wow.data.items import wow_items, starting_letter_groups
-from wow.data.models import Items
+from utils.database import db
+from utils.string_matching import distance
+from utils.strings import async_sequence_score, normalise
+from wow.data.items import normalised_items, item_starting_letter_groups
+from wow.data.spells import spell_starting_letter_groups, normalised_spells
 
 
 @AsyncTTL(time_to_live=86400)
 async def get_item_tooltip(item_id: int) -> bytes:
-    return (await Items.get(id=item_id)).tooltip
+    return await db.tooltip_from_item_id(item_id)
 
 
-async def item_look_up(message: str) -> AsyncIterable[tuple[Optional[bytes], str, str]]:
-    items = [await wow_fuzzy_match(item_name) for item_name in re.findall(r"{{}}|{{[a-zA-Z0-9,\-.' ]+}}", message)]
+@AsyncTTL(time_to_live=86400)
+async def get_spell_tooltip(spell_id: int) -> bytes:
+    return await db.tooltip_from_spell_id(spell_id)
 
-    for item_id, item_name in items:
-        try:
-            tooltip = await get_item_tooltip(item_id)
-        except DoesNotExist:
-            yield None, make_url(item_id, item_name), item_name
+
+async def wow_look_up(message: str) -> AsyncIterable[tuple[Optional[bytes], str, str]]:
+    items = [
+        await wow_fuzzy_match(item_name, item_starting_letter_groups, normalised_items)
+        for item_name in re.findall(r"{{}}|{{[a-zA-Z0-9,\-.' ]+}}", message)
+    ]
+
+    spells = [
+        await wow_fuzzy_match(item_name, spell_starting_letter_groups, normalised_spells)
+        for item_name in re.findall(r"{{}}|{{[a-zA-Z0-9,\-.' ]+}}", message)
+    ]
+
+    for (item_id, item_name, item_score), (spell_id, spell_name, spell_score) in zip(items, spells):
+        if item_score > spell_score:
+            yield await get_item_tooltip(item_id), make_url(item_id, item_name, "item"), item_name
         else:
-            yield tooltip, make_url(item_id, item_name), item_name
+            yield await get_spell_tooltip(spell_id), make_url(spell_id, spell_name, "spell"), spell_name
 
 
-def make_url(item_id: int, item_name: str):
-    return f"https://wowhead.com/wotlk/item={item_id}/{item_name.replace(' ', '-')}"
+def make_url(item_id: int, item_name: str, area: str):
+    return f"https://wowhead.com/wotlk/{area}={item_id}/{normalise(item_name).replace(' ', '-')}"
 
 
-def normalise(item: str) -> str:
-    return re.sub(f"[{punctuation + whitespace}]+", " ", item).strip().lower()
-
-
-def matching_start_items(item_name: str) -> list[str]:
+async def matching_start_items(item_name: str, starting_letters: callable) -> list[str]:
     try:
-        return starting_letter_groups[item_name[:3]]
+        return (await starting_letters())[item_name[:3]]
     except (KeyError, IndexError):
         return []
 
 
 # @AsyncTTL(time_to_live=86400)
-async def wow_fuzzy_match(item_name: str):
-    item_name = normalise(item_name)
+async def wow_fuzzy_match(name: str, starting_letters: callable, normalised_names: callable):
+    name = normalise(name)
+    score = 100_000_000
     try:
-        item_id = wow_items[item_name]
+        item_id = (await normalised_names())[name]
     except KeyError:
         scores = await asyncio.gather(
             *(
-                async_sequence_score(item_name, item)
-                for item in matching_start_items(item_name) if distance(item_name, item) < 7
+                async_sequence_score(name, item)
+                for item in await matching_start_items(name, starting_letters) if distance(name, item) < 7
             )
         )
 
         if scores:
-            item_name = max(scores, key=itemgetter(1))[0]
+            name, score = max(scores, key=itemgetter(1))
         else:
-            item_name = "dirge"
+            name, score = "dirge", 0
 
-        item_id = wow_items[item_name]
+        item_id = (await normalised_names())[name]
 
-    return item_id, item_name
+    return item_id, name, score
