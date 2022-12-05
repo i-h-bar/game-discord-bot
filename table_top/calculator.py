@@ -11,11 +11,8 @@ operators = {
 }
 
 
-def calculate_from_message(message):
-    reply = f"{message.author.mention} `{message.content.replace(' ', '').replace('/c', '').strip()}` = "
-    reply += str(calculate(message.content.replace("/c", "")))
-    return reply
-
+def calculate_from_message(expression):
+    return f"`{expression.replace(' ', '').strip()}` = {calculate(expression)}"
 
 def calculate(expression: str) -> Union[float, int, str]:
     while "(" in expression or ")" in expression:

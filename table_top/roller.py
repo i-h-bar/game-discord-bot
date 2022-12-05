@@ -7,22 +7,18 @@ from table_top.constants import DICE_REGEX
 from table_top.dice import Dice
 
 
-def get_roll(message):
-    content = message.content
-
-    if len(content) > 100:
+def get_roll(dice_command: str):
+    if len(dice_command) > 100:
         raise ValueError("Content too large")
 
     for key in dice_map.keys():
-        if key in content:
-            return roll_edge_dice(message)
+        if key in dice_command:
+            return roll_edge_dice(dice_command)
     else:
-        content = content.lstrip("/rol ")
-
-        if "[" in content and "]" in content:
+        if "[" in dice_command and "]" in dice_command:
             message = '\n'.join(
                 roll_classic(dice.lstrip('[').rstrip(']'))
-                for group in content.split(",")
+                for group in dice_command.split(",")
                 for num, dice in re.findall(r'(\d+)(\[.*])', group.strip())
                 for _ in range(int(num)) if int(num) < 51
             )
@@ -33,7 +29,7 @@ def get_roll(message):
             return f"\n{message}"
 
         else:
-            return roll_classic(content)
+            return roll_classic(dice_command)
 
 
 def roll_classic(content):
