@@ -17,6 +17,7 @@ from wow.data.items import item_starting_letter_groups
 from wow.data.spells import spell_starting_letter_groups
 from wow.help_message import WOW_HELP
 from wow.items import item_look_up
+from wow.search import look_up
 from wow.spells import spell_look_up
 
 
@@ -62,6 +63,26 @@ async def help_command(interaction: discord.Integration, game: str):
         help_msg = GENERAL_HELP
 
     return await interaction.response.send_message(help_msg, ephemeral=True)
+
+
+@bot.tree.command(
+    name="search",
+    description="Search from an Item or Spell in Wrath of the Lich King Classic (Fuzzy Matches)"
+)
+@app_commands.describe(name="Item or Spell to search (Fuzzy matches)")
+@app_commands.describe(hide="Hide the dice roll Yes/No")
+@app_commands.choices(hide=[
+    app_commands.Choice(name="Yes", value=True),
+    app_commands.Choice(name="No", value=False),
+])
+async def get_spell_or_item(interaction: discord.Integration, name: str, hide: int = None):
+    tooltip, url, name = await look_up(name)
+
+    await interaction.response.send_message(
+        f"<{url}>",
+        file=discord.File(io.BytesIO(tooltip), f"{name}.png"),
+        ephemeral=bool(hide)
+    )
 
 
 @bot.tree.command(name="item", description="Search for an item in Wrath of the Lich King Classic (Fuzzy Matches)")
@@ -134,15 +155,6 @@ async def flip(interaction: discord.Integration, number_of_flips: str):
 ])
 async def flip_until(interaction: discord.Integration, face: str, with_thumb: int = None):
     return await interaction.response.send_message(flip_coin_until(face, with_thumb))
-
-
-@bot.tree.command(
-    name="search",
-    description="Search from an Item or Spell in Wrath of the Lich King Classic (Fuzzy Matches)"
-)
-@app_commands.describe(name="Item or Spell to search (Fuzzy matches)")
-async def get_spell_or_item(interaction: discord.Integration, name: str):
-    return interaction.response.send_message(name)
 
 
 @bot.tree.command(name="card", description="Search for a Magic the Gathering card (Fuzzy Matches)")
