@@ -36,6 +36,7 @@ async def on_ready():
     await item_starting_letter_groups()
     await spell_starting_letter_groups()
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="Slash Commands"))
+    print("id: ", bot.application_id)
     synced = await bot.tree.sync()
 
     print(f"Synced {len(synced)} commands")
