@@ -19,5 +19,4 @@ EDGE_HELP = "`/roll dice [hide]` - is a function to roll any dice including the 
             "- Threat = ⎔\n" \
             "- Light = ○\n" \
             "- Dark = ●\n" \
-            "- Blank = ▢\n" \
-
+            "- Blank = ▢\n"

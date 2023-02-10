@@ -15,6 +15,7 @@ from table_top.roller import get_roll
 from utils.database import db
 from wow.data.items import item_starting_letter_groups
 from wow.data.spells import spell_starting_letter_groups
+from wow.data.spells_and_items import object_starting_letter_groups
 from wow.help_message import WOW_HELP
 from wow.items import item_look_up
 from wow.search import look_up
@@ -36,6 +37,7 @@ async def on_ready():
     await db.connect()
     await item_starting_letter_groups()
     await spell_starting_letter_groups()
+    await object_starting_letter_groups()
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="Slash Commands"))
     print("id: ", bot.application_id)
     synced = await bot.tree.sync()

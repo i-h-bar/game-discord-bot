@@ -1,47 +1,65 @@
+from operator import itemgetter
+
 import numpy as np
 cimport numpy as np
 
-np.import_array()
+def get_closest_match(name: bytes, starting_letter_groups: dict[bytes, list[bytes]]) -> bytes:
+    try:
+        matching_start_items = starting_letter_groups[name[:3]]
+    except (KeyError, IndexError):
+        matching_start_items = []
+
+    scores = tuple(
+        (item, c_consecutive_sequence_score(name, item))
+        for item in matching_start_items if c_levenshtein_distance(name, item) < 7
+    )
+
+    if scores:
+        name, score = max(scores, key=itemgetter(1))
+    else:
+        name, score = b"dirge", 0
+
+    return name
 
 
-def distance(string_1: str, string_2: str) -> int:
-    return _distance(string_1, string_2)
+def distance(string_1: bytes, string_2: bytes) -> int:
+    return c_levenshtein_distance(string_1, string_2)
 
 
-cdef int _distance(str string_1, str string_2):
-    cdef int x
-    cdef int y
-
-    cdef object[:, :] matrix = np.zeros((len(string_1) + 1, len(string_2) + 1), dtype=object)
-
-    for x in range(matrix.shape[0]):
-        matrix[x, 0] = x
-
-    for y in range(matrix.shape[1]):
-        matrix[0, y] = y
-
-    for x in range(1, matrix.shape[0]):
-        for y in range(1, matrix.shape[1]):
-            if string_1[x - 1] == string_2[y - 1]:
-                matrix[x, y] = matrix[x - 1, y - 1]
+cdef int c_levenshtein_distance(char *a, char *b):
+    cdef int x = len(a) + 1
+    cdef int y = len(b) + 1
+    cdef int i, j
+    cdef int[:, :] d = np.zeros((x, y), dtype=int)
+    for i in range(x):
+        d[i][0] = i
+    for j in range(y):
+        d[0][j] = j
+    for i in range(1, x):
+        for j in range(1, y):
+            if a[i-1] == b[j-1]:
+                d[i][j] = d[i-1][j-1]
             else:
-                matrix[x, y] = min(matrix[x - 1, y - 1], matrix[x - 1, y], matrix[x, y - 1]) + 1
-
-    return matrix[-1, -1]
-
-
-def consecutive_sequence_score(string_1: str, string_2: str) -> int:
-    return _consecutive_sequence_score(string_1, string_2)
+                d[i][j] = min(d[i-1][j], d[i][j-1], d[i-1][j-1]) + 1
+    return d[x - 1][y - 1]
 
 
-cdef int _consecutive_sequence_score(str string_1, str string_2):
-    cdef int x
-    cdef int y
-    cdef object[:, :] matrix = np.zeros((len(string_1) + 1, len(string_2) + 1), dtype=object)
+def consecutive_sequence_score(string_1: bytes, string_2: bytes) -> int:
+    return c_consecutive_sequence_score(string_1, string_2)
 
-    for x in range(1, matrix.shape[0]):
-        for y in range(1, matrix.shape[1]):
-            if string_1[x - 1] == string_2[y - 1]:
-                matrix[x, y] = matrix[x - 1, y - 1] + 1
 
-    return np.sum(matrix) / len(string_2)
+cdef int c_consecutive_sequence_score(char *string_1, char *string_2):
+    cdef int i
+    cdef int j
+    cdef int x = len(string_1) + 1
+    cdef int y = len(string_2) + 1
+    cdef int[:, :] matrix = np.zeros((x, y), dtype=int)
+    cdef int score = 0
+
+    for i in range(1, x):
+        for j in range(1, y):
+            if string_1[i - 1] == string_2[j - 1]:
+                matrix[i][j] = matrix[i - 1][j - 1] + 1
+                score += matrix[i][j]
+
+    return score

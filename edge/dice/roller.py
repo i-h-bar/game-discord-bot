@@ -1,8 +1,6 @@
 import re
 from collections import defaultdict
 
-from discord import Message
-
 from edge.dice.command_map import dice_map
 from edge.dice.groups import ALL_DICE
 from edge.dice.sides import SUCCESS, ADVANTAGE, TRIUMPH, FAILURE, THREAT, DESPAIR, LIGHT, DARK, \
