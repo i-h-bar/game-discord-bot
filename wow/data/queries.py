@@ -24,3 +24,6 @@ class WoWQueries:
         return await self.connection.fetch(
             f"select spell_id, name from spell order by rank"
         )
+
+    async def all_item_names(self):
+        return await self.connection.fetch(f"select i.name from item i")
