@@ -26,11 +26,11 @@ def distance(string_1: bytes, string_2: bytes) -> int:
     return c_levenshtein_distance(string_1, string_2)
 
 
-cdef int c_levenshtein_distance(char *a, char *b):
+cdef long c_levenshtein_distance(char *a, char *b):
     cdef int x = len(a) + 1
     cdef int y = len(b) + 1
     cdef int i, j
-    cdef int[:, :] d = np.zeros((x, y), dtype=int)
+    cdef long[:, :] d = np.zeros((x, y), dtype=np.int_)
     for i in range(x):
         d[i][0] = i
     for j in range(y):
