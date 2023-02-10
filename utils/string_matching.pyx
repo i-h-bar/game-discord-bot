@@ -48,13 +48,13 @@ def consecutive_sequence_score(string_1: bytes, string_2: bytes) -> int:
     return c_consecutive_sequence_score(string_1, string_2)
 
 
-cdef int c_consecutive_sequence_score(char *string_1, char *string_2):
+cdef long c_consecutive_sequence_score(char *string_1, char *string_2):
     cdef int i
     cdef int j
     cdef int x = len(string_1) + 1
     cdef int y = len(string_2) + 1
     cdef int[:, :] matrix = np.zeros((x, y), dtype=int)
-    cdef int score = 0
+    cdef long score = 0
 
     for i in range(1, x):
         for j in range(1, y):
