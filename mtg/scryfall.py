@@ -1,5 +1,3 @@
-import asyncio
-import re
 from typing import Tuple
 
 from utils.aio.requests import async_get

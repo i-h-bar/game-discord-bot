@@ -1,5 +1,26 @@
+from operator import itemgetter
+
+cimport
+numpy as np
 import numpy as np
-cimport numpy as np
+
+def get_closest_match(name: bytes, starting_letter_groups: dict[bytes, list[bytes]]) -> bytes:
+    try:
+        matching_start_items = starting_letter_groups[name[:3]]
+    except (KeyError, IndexError):
+        matching_start_items = []
+
+    scores = tuple(
+        (item, c_consecutive_sequence_score(name, item))
+        for item in matching_start_items if c_levenshtein_distance(name, item) < 7
+    )
+
+    if scores:
+        name, score = max(scores, key=itemgetter(1))
+    else:
+        name, score = b"dirge", 0
+
+    return name
 
 
 def distance(string_1: bytes, string_2: bytes) -> int:
@@ -25,10 +46,10 @@ cdef int c_levenshtein_distance(char *a, char *b):
 
 
 def consecutive_sequence_score(string_1: bytes, string_2: bytes) -> int:
-    return _consecutive_sequence_score(string_1, string_2)
+    return c_consecutive_sequence_score(string_1, string_2)
 
 
-cdef int _consecutive_sequence_score(char *string_1, char *string_2):
+cdef int c_consecutive_sequence_score(char *string_1, char *string_2):
     cdef int i
     cdef int j
     cdef int x = len(string_1) + 1

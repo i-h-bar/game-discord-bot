@@ -1,17 +1,14 @@
 from asyncpg import Connection
-from cache import AsyncTTL
 
 
 class WoWQueries:
     connection: Connection | None
 
-    @AsyncTTL(time_to_live=86400)
     async def tooltip_from_item_id(self, item_id) -> bytes:
         return await self.connection.fetchval(
             f"select t.tooltip from item i join tooltip t on t.tooltip_id = i.tooltip_id and i.item_id = {item_id}"
         )
 
-    @AsyncTTL(time_to_live=86400)
     async def tooltip_from_spell_id(self, spell_id) -> bytes:
         return await self.connection.fetchval(
             f"select t.tooltip from spell s join tooltip t on t.tooltip_id = s.tooltip_id and s.spell_id = {spell_id}"
