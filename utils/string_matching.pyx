@@ -53,7 +53,7 @@ cdef long c_consecutive_sequence_score(char *string_1, char *string_2):
     cdef int j
     cdef int x = len(string_1) + 1
     cdef int y = len(string_2) + 1
-    cdef int[:, :] matrix = np.zeros((x, y), dtype=int)
+    cdef long[:, :] matrix = np.zeros((x, y), dtype=int)
     cdef long score = 0
 
     for i in range(1, x):
