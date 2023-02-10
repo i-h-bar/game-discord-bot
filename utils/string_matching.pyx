@@ -1,8 +1,7 @@
 from operator import itemgetter
 
-cimport
-numpy as np
 import numpy as np
+cimport numpy as np
 
 def get_closest_match(name: bytes, starting_letter_groups: dict[bytes, list[bytes]]) -> bytes:
     try:
