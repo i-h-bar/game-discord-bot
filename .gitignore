@@ -143,3 +143,4 @@ fix_tp.py
 
 *.sqlite3
 *.lprof
+words.json
