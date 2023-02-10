@@ -12,12 +12,12 @@ async def encoded_item_names() -> list[bytes]:
 
 @AsyncLRU()
 async def normalised_items() -> dict[str, int]:
-    return {normalise(item["name"]): item["item_id"] for item in await db.all_items_ids_and_names()}
+    return {normalise(item["name"]).encode(): item["item_id"] for item in await db.all_items_ids_and_names()}
 
 
 @AsyncLRU()
 async def item_starting_letters() -> dict[bytes, str]:
-    return {item.encode(): set(word[:3] for word in item.split()) for item in (await normalised_items()).keys()}
+    return {item: set(word[:2] for word in item.split()) for item in (await normalised_items()).keys()}
 
 
 @AsyncLRU()
