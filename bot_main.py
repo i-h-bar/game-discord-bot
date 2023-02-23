@@ -2,8 +2,6 @@ import io
 import os
 
 import discord
-from discord import app_commands
-from discord.ext import commands
 
 from edge.help_message import EDGE_HELP
 from mtg.help_message import MTG_HELP
@@ -14,7 +12,7 @@ from table_top.help_message import GENERAL_HELP
 from table_top.roller import get_roll
 from utils.database import db
 from utils.discord.bot import Bot
-from utils.discord.models import Game, Hide, SpellItem, Item, Spell, Dice, Expression, Flips, Face, WithThumb
+from utils.discord.models import Game, Hide, SpellItem, Item, Spell, Dice, Expression, Flips, Face, WithThumb, Card
 from utils.discord.types import Integration
 from wow.data.items import item_starting_letter_groups
 from wow.data.spells import spell_starting_letter_groups
@@ -23,7 +21,6 @@ from wow.help_message import WOW_HELP
 from wow.items import item_look_up
 from wow.search import look_up
 from wow.spells import spell_look_up
-
 
 bot = Bot(command_prefix="/", intents=discord.Intents.all())
 
@@ -112,14 +109,14 @@ async def flip(interaction: Integration, number_of_flips: Flips):
 
 
 @bot.slash_command
-async def flip_until(interaction: discord.Integration, face: Face, with_thumb: WithThumb = None):
+async def flip_until(interaction: Integration, face: Face, with_thumb: WithThumb = None):
     """Keep flipping coins until a result is flipped"""
 
     return await interaction.response.send_message(flip_coin_until(face, with_thumb))
 
 
 @bot.slash_command
-async def card(interaction: discord.Integration, name: str):
+async def card(interaction: Integration, name: Card):
     """Search for a Magic the Gathering card (Fuzzy Matches)"""
     card_info, card_image = await search_scryfall(name)
     return await interaction.response.send_message(
