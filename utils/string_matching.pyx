@@ -9,15 +9,15 @@ def get_closest_match(name: bytes, starting_letter_groups: dict[bytes, list[byte
     except (KeyError, IndexError):
         matching_start_items = []
 
-    scores = tuple(
+    scores = (
         (item, c_consecutive_sequence_score(name, item))
         for item in matching_start_items if c_levenshtein_distance(name, item) < 7
     )
 
-    if scores:
-        name, score = max(scores, key=itemgetter(1))
-    else:
-        name, score = b"dirge", 0
+    try:
+        name, _ = max(scores, key=itemgetter(1))
+    except ValueError:
+        name = b"dirge"
 
     return name
 

@@ -2,6 +2,6 @@ import setup
 
 setup.build()
 
-import bot
+import bot_main
 
-bot.run()
+bot_main.run()
