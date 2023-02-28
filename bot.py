@@ -3,7 +3,6 @@ import os
 
 import discord
 from discord import app_commands
-from discord.ext import commands
 
 from edge.help_message import EDGE_HELP
 from mtg.help_message import MTG_HELP
@@ -13,6 +12,9 @@ from table_top.coin.flip import flip_coin_until, flip_coin
 from table_top.help_message import GENERAL_HELP
 from table_top.roller import get_roll
 from utils.database import db
+from utils.discord.extended_bot import Bot
+from utils.discord.arguments import Game, Hide, SpellItem, Item, Spell, Dice, Expression, Flips, Face, WithThumb, Card
+from utils.discord.types import Integration
 from wow.data.items import item_starting_letter_groups
 from wow.data.spells import spell_starting_letter_groups
 from wow.data.spells_and_items import object_starting_letter_groups
@@ -20,14 +22,6 @@ from wow.help_message import WOW_HELP
 from wow.items import item_look_up
 from wow.search import look_up
 from wow.spells import spell_look_up
-
-
-class Bot(commands.Bot):
-    async def close(self):
-        await db.close()
-        await super().close()
-        print("Bot Closed Down")
-
 
 bot = Bot(command_prefix="/", intents=discord.Intents.all())
 
@@ -46,15 +40,9 @@ async def on_ready():
     print("Game bot initialised")
 
 
-@bot.tree.command(name="help", description="Get help with using the bot for a particular game.")
-@app_commands.describe(game="Which game's commands you wish to get help with")
-@app_commands.choices(game=[
-    app_commands.Choice(name="World of Warcraft", value="wow"),
-    app_commands.Choice(name="Magic the Gathering", value="mtg"),
-    app_commands.Choice(name="Star Wars: Edge of the Empire", value="sweote"),
-    app_commands.Choice(name="General", value="general")
-])
-async def help_command(interaction: discord.Integration, game: str):
+@bot.slash_command(alias="help")
+async def help_function(interaction: Integration, game: Game):
+    """Get help with using the bot for a particular game."""
     if game == "wow":
         help_msg = WOW_HELP
     elif game == "mtg":
@@ -67,17 +55,9 @@ async def help_command(interaction: discord.Integration, game: str):
     return await interaction.response.send_message(help_msg, ephemeral=True)
 
 
-@bot.tree.command(
-    name="search",
-    description="Search from an Item or Spell in Wrath of the Lich King Classic (Fuzzy Matches)"
-)
-@app_commands.describe(name="Item or Spell to search (Fuzzy matches)")
-@app_commands.describe(hide="Hide the dice roll Yes/No")
-@app_commands.choices(hide=[
-    app_commands.Choice(name="Yes", value=True),
-    app_commands.Choice(name="No", value=False),
-])
-async def get_spell_or_item(interaction: discord.Integration, name: str, hide: int = None):
+@bot.slash_command()
+async def search(interaction: Integration, name: SpellItem, hide: Hide = None):
+    """Search from an Item or Spell in Wrath of the Lich King Classic (Fuzzy Matches)"""
     tooltip, url, name = await look_up(name)
 
     await interaction.response.send_message(
@@ -87,14 +67,9 @@ async def get_spell_or_item(interaction: discord.Integration, name: str, hide: i
     )
 
 
-@bot.tree.command(name="item", description="Search for an item in Wrath of the Lich King Classic (Fuzzy Matches)")
-@app_commands.describe(item_name="Item to get (Fuzzy matches so don't worry if you mistype)")
-@app_commands.describe(hide="Hide the item response Yes/No")
-@app_commands.choices(hide=[
-    app_commands.Choice(name="Yes", value=True),
-    app_commands.Choice(name="No", value=False),
-])
-async def get_item(interaction: discord.Integration, item_name: str, hide: int = None):
+@bot.slash_command()
+async def item(interaction: Integration, item_name: Item, hide: Hide = None):
+    """Search for an item in Wrath of the Lich King Classic (Fuzzy Matches)"""
     tooltip, url, name = await item_look_up(item_name)
 
     await interaction.response.send_message(
@@ -104,14 +79,9 @@ async def get_item(interaction: discord.Integration, item_name: str, hide: int =
     )
 
 
-@bot.tree.command(name="spell", description="Search for an spell in Wrath of the Lich King Classic (Fuzzy Matches)")
-@app_commands.describe(spell_name="Spell to get (Fuzzy matches so don't worry if you mistype)")
-@app_commands.describe(hide="Hide the spell response Yes/No")
-@app_commands.choices(hide=[
-    app_commands.Choice(name="Yes", value=True),
-    app_commands.Choice(name="No", value=False),
-])
-async def get_spell(interaction: discord.Integration, spell_name: str, hide: int = None):
+@bot.slash_command()
+async def spell(interaction: Integration, spell_name: Spell, hide: Hide = None):
+    """Search for a spell in Wrath of the Lich King Classic (Fuzzy Matches)"""
     tooltip, url, name = await spell_look_up(spell_name)
 
     await interaction.response.send_message(
@@ -121,47 +91,33 @@ async def get_spell(interaction: discord.Integration, spell_name: str, hide: int
     )
 
 
-@bot.tree.command(name="roll", description="Roll any number/size of numerical or SW:EotE dice.")
-@app_commands.describe(dice="Size and number of dice to roll")
-@app_commands.describe(hide="Hide the dice roll Yes/No")
-@app_commands.choices(hide=[
-    app_commands.Choice(name="Yes", value=True),
-    app_commands.Choice(name="No", value=False),
-])
-async def roll_dice(interaction: discord.Integration, dice: str, hide: int = None):
+@bot.slash_command()
+async def roll(interaction: Integration, dice: Dice, hide: Hide = None):
+    """Roll any number/size of numerical or SW:EotE dice."""
     await interaction.response.send_message(get_roll(dice), ephemeral=bool(hide))
 
 
-@bot.tree.command(name="calc", description="Run a simple numerical calculation")
-@app_commands.describe(expression="Expression to calculate")
-async def calculate(interaction: discord.Integration, expression: str):
+@bot.slash_command()
+async def calc(interaction: Integration, expression: Expression):
+    """Run a simple numerical calculation"""
     return await interaction.response.send_message(calculate_from_message(expression))
 
 
-@bot.tree.command(name="flip", description="Flip a coin x amount of times")
-@app_commands.describe(number_of_flips="Number of times to flip the coin")
-async def flip(interaction: discord.Integration, number_of_flips: str):
+@bot.slash_command()
+async def flip(interaction: Integration, number_of_flips: Flips):
+    """Flip a coin x amount of times"""
     return await interaction.response.send_message(await flip_coin(number_of_flips))
 
 
-@bot.tree.command(name="flip_until", description="Keep flipping coins until a result is flipped")
-@app_commands.describe(face="The loss condition")
-@app_commands.describe(with_thumb="Use the Karak's Thumb rules in determining the coin flips")
-@app_commands.choices(face=[
-    app_commands.Choice(name="Heads", value="Heads"),
-    app_commands.Choice(name="Tails", value="Tails"),
-])
-@app_commands.choices(with_thumb=[
-    app_commands.Choice(name="Yes", value=True),
-    app_commands.Choice(name="No", value=False),
-])
-async def flip_until(interaction: discord.Integration, face: str, with_thumb: int = None):
+@bot.slash_command()
+async def flip_until(interaction: Integration, face: Face, with_thumb: WithThumb = None):
+    """Keep flipping coins until a result is flipped"""
     return await interaction.response.send_message(flip_coin_until(face, with_thumb))
 
 
-@bot.tree.command(name="card", description="Search for a Magic the Gathering card (Fuzzy Matches)")
-@app_commands.describe(name="Card name to search")
-async def get_card(interaction: discord.Integration, name: str):
+@bot.slash_command()
+async def card(interaction: Integration, name: Card):
+    """Search for a Magic the Gathering card (Fuzzy Matches)"""
     card_info, card_image = await search_scryfall(name)
     return await interaction.response.send_message(
         file=discord.File(io.BytesIO(card_image), f"{card_info.get('name', 'default').replace(' ', '_')}.png")
