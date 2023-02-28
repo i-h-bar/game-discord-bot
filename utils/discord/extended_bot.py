@@ -14,7 +14,6 @@ class Bot(commands.Bot):
             return self._alter_function(alias, alias.__name__)
         else:
             def wrapper(func):
-                nonlocal alias
                 return self._alter_function(func, alias)
 
             return wrapper
@@ -27,29 +26,17 @@ class Bot(commands.Bot):
 
         for key, value in params.items():
             if issubclass(spec.annotations[key], DiscordArgument):
-
-                value = inspect.Parameter(
+                params[key] = inspect.Parameter(
                     value.name, value.kind, default=value.default, annotation=spec.annotations[key].annotation()
                 )
-                params[key] = value
 
         slash_command_args = {key: spec.annotations[key] for key in spec.args[1:]}
+        func = app_commands.describe(**{arg: model.__doc__ for arg, model in slash_command_args.items()})(func)
 
-        func = app_commands.describe(
-            **{
-                arg: model.__doc__ for arg, model in slash_command_args.items()
-            }
-        )(func)
-
-        choices = {
-            arg: [app_commands.Choice(name=name, value=value) for name, value in info.choices.items()]
-            for arg, info in slash_command_args.items() if info.choices
-        }
+        choices = {arg_name: arg.formatted_choices() for arg_name, arg in slash_command_args.items() if arg.choices}
         func = app_commands.choices(**choices)(func)
 
-        sig = sig.replace(parameters=list(params.values()))
-        func.__signature__ = sig
-
+        func.__signature__ = sig.replace(parameters=list(params.values()))
         func = self.tree.command(name=name, description=description)(func)
 
         return func

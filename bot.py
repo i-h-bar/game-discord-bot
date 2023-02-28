@@ -11,7 +11,7 @@ from table_top.coin.flip import flip_coin_until, flip_coin
 from table_top.help_message import GENERAL_HELP
 from table_top.roller import get_roll
 from utils.database import db
-from utils.discord.bot import Bot
+from utils.discord.extended_bot import Bot
 from utils.discord.models import Game, Hide, SpellItem, Item, Spell, Dice, Expression, Flips, Face, WithThumb, Card
 from utils.discord.types import Integration
 from wow.data.items import item_starting_letter_groups

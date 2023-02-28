@@ -1,3 +1,4 @@
+from discord import app_commands
 from discord.app_commands.transformers import ALLOWED_DEFAULTS
 
 
@@ -14,3 +15,7 @@ class DiscordArgument:
                 return base
         else:
             return str
+
+    @classmethod
+    def formatted_choices(cls):
+        return [app_commands.Choice(name=name, value=value) for name, value in cls.choices.items()]
