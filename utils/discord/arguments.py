@@ -47,6 +47,7 @@ class Face(DiscordArgument, str):
 
 class WithThumb(DiscordArgument,  int):
     """Use the Karak's Thumb rules in determining the coin flips"""
+    name = "karaks-thumb"
     choices = {"Yes": True, "No": False}
 
 

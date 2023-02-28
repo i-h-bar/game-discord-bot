@@ -19,6 +19,7 @@ class _Transformer(type):
 
 
 class DiscordArgument(metaclass=_Transformer):
+    name: str | None = None
     choices: dict | None = None
 
     @classmethod
