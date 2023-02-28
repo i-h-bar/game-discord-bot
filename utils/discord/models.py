@@ -1,14 +1,8 @@
-from typing import Any
+from utils.discord.argument import DiscordArgument
 
 
-class DiscordArgument(Any):
-    description: str = None
-    annotation: type = str
-    choices: dict[str, Any] | None = None
-
-
-class Game(DiscordArgument):
-    description = "Which game's commands you wish to get help with"
+class Game(DiscordArgument, str):
+    """Which game's commands you wish to get help with"""
     choices = {
         "World of Warcraft": "wow",
         "Magic the Gathering": "mtg",
@@ -17,39 +11,44 @@ class Game(DiscordArgument):
     }
 
 
-class Hide(DiscordArgument):
-    description = "Hide the dice roll Yes/No"
-    annotation = int
+class Hide(DiscordArgument, int):
+    """Hide the dice roll Yes/No"""
     choices = {"Yes": True, "No": False}
 
 
-class SpellItem(DiscordArgument): description = "Item or Spell to search (Fuzzy matches)"
+class SpellItem(DiscordArgument, str):
+    """Item or Spell to search (Fuzzy matches)"""
 
 
-class Item(DiscordArgument): description = "Item to get (Fuzzy matches so don't worry if you mistype)"
+class Item(DiscordArgument, str):
+    """Item to get (Fuzzy matches so don't worry if you mistype)"""
 
 
-class Spell(DiscordArgument): description = "Spell to get (Fuzzy matches so don't worry if you mistype)"
+class Spell(DiscordArgument, str):
+    """Spell to get (Fuzzy matches so don't worry if you mistype)"""
 
 
-class Dice(DiscordArgument): description = "Size and number of dice to roll"
+class Dice(DiscordArgument, str):
+    """Size and number of dice to roll"""
 
 
-class Expression(DiscordArgument): description = "Expression to calculate"
+class Expression(DiscordArgument, str):
+    """Expression to calculate"""
 
 
-class Flips(DiscordArgument): description = "Number of times to flip the coin"
+class Flips(DiscordArgument, str):
+    """Number of times to flip the coin"""
 
 
-class Face(DiscordArgument):
-    description = "The loss condition"
+class Face(DiscordArgument, str):
+    """The loss condition"""
     choices = {"Heads": "Heads", "Tails": "Tails"}
 
 
-class WithThumb(DiscordArgument):
-    description = "Use the Karak's Thumb rules in determining the coin flips"
-    annotation = int
+class WithThumb(DiscordArgument,  int):
+    """Use the Karak's Thumb rules in determining the coin flips"""
     choices = {"Yes": True, "No": False}
 
 
-class Card(DiscordArgument): description = "Card name to search"
+class Card(DiscordArgument, str):
+    """Card name to search"""

@@ -27,8 +27,9 @@ class Bot(commands.Bot):
 
         for key, value in params.items():
             if issubclass(spec.annotations[key], DiscordArgument):
+
                 value = inspect.Parameter(
-                    value.name, value.kind, default=value.default, annotation=spec.annotations[key].annotation
+                    value.name, value.kind, default=value.default, annotation=spec.annotations[key].annotation()
                 )
                 params[key] = value
 
@@ -36,7 +37,7 @@ class Bot(commands.Bot):
 
         func = app_commands.describe(
             **{
-                arg: model.description for arg, model in slash_command_args.items()
+                arg: model.__doc__ for arg, model in slash_command_args.items()
             }
         )(func)
 
