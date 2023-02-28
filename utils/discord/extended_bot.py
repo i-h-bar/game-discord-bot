@@ -2,6 +2,7 @@ import inspect
 from typing import Callable, Coroutine, Sequence
 
 from discord import app_commands
+from discord.abc import Snowflake
 from discord.ext import commands
 from discord.utils import MISSING
 
@@ -15,7 +16,7 @@ class Bot(commands.Bot):
             alias: str | None = None,
             nsfw: bool = False,
             guild: int | None = MISSING,
-            guilds: Sequence[int] = MISSING
+            guilds: Sequence[Snowflake] | Sequence[int] = MISSING
     ):
         def wrapper(func: Callable[[Integration, ...], Coroutine]):
             spec = inspect.getfullargspec(func)

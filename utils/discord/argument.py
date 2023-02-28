@@ -16,7 +16,6 @@ class _Transformer(type):
 
         BUILT_IN_TRANSFORMERS[cls] = BUILT_IN_TRANSFORMERS[base]
         super().__init__(name, bases, clsdict)
-        print(f"Initialised {cls.__name__}")
 
 
 class DiscordArgument(metaclass=_Transformer):
