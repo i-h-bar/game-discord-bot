@@ -8,21 +8,19 @@ ALLOWED_DEFAULTS = set(_type for tup in ALLOWED_DEFAULTS.values() for _type in t
 
 class _Transformer(type):
     def __init__(cls: DiscordArgument, name, bases, clsdict):
-        BUILT_IN_TRANSFORMERS[cls] = BUILT_IN_TRANSFORMERS[cls.annotation()]
+        for base in bases:
+            if base in ALLOWED_DEFAULTS:
+                break
+        else:
+            base = str
+
+        BUILT_IN_TRANSFORMERS[cls] = BUILT_IN_TRANSFORMERS[base]
         super().__init__(name, bases, clsdict)
         print(f"Initialised {cls.__name__}")
 
 
 class DiscordArgument(metaclass=_Transformer):
     choices: dict | None = None
-
-    @classmethod
-    def annotation(cls):
-        for base in cls.__bases__:
-            if base in ALLOWED_DEFAULTS:
-                return base
-        else:
-            return str
 
     @classmethod
     def formatted_choices(cls):
