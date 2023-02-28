@@ -12,7 +12,7 @@ from table_top.help_message import GENERAL_HELP
 from table_top.roller import get_roll
 from utils.database import db
 from utils.discord.extended_bot import Bot
-from utils.discord.models import Game, Hide, SpellItem, Item, Spell, Dice, Expression, Flips, Face, WithThumb, Card
+from utils.discord.arguments import Game, Hide, SpellItem, Item, Spell, Dice, Expression, Flips, Face, WithThumb, Card
 from utils.discord.types import Integration
 from wow.data.items import item_starting_letter_groups
 from wow.data.spells import spell_starting_letter_groups
@@ -54,7 +54,7 @@ async def help_function(interaction: Integration, game: Game):
     return await interaction.response.send_message(help_msg, ephemeral=True)
 
 
-@bot.slash_command
+@bot.slash_command()
 async def search(interaction: Integration, name: SpellItem, hide: Hide = None):
     """Search from an Item or Spell in Wrath of the Lich King Classic (Fuzzy Matches)"""
     tooltip, url, name = await look_up(name)
@@ -66,7 +66,7 @@ async def search(interaction: Integration, name: SpellItem, hide: Hide = None):
     )
 
 
-@bot.slash_command
+@bot.slash_command()
 async def item(interaction: Integration, item_name: Item, hide: Hide = None):
     """Search for an item in Wrath of the Lich King Classic (Fuzzy Matches)"""
     tooltip, url, name = await item_look_up(item_name)
@@ -78,7 +78,7 @@ async def item(interaction: Integration, item_name: Item, hide: Hide = None):
     )
 
 
-@bot.slash_command
+@bot.slash_command()
 async def spell(interaction: Integration, spell_name: Spell, hide: Hide = None):
     """Search for a spell in Wrath of the Lich King Classic (Fuzzy Matches)"""
     tooltip, url, name = await spell_look_up(spell_name)
@@ -90,32 +90,31 @@ async def spell(interaction: Integration, spell_name: Spell, hide: Hide = None):
     )
 
 
-@bot.slash_command
+@bot.slash_command()
 async def roll(interaction: Integration, dice: Dice, hide: Hide = None):
     """Roll any number/size of numerical or SW:EotE dice."""
     await interaction.response.send_message(get_roll(dice), ephemeral=bool(hide))
 
 
-@bot.slash_command
+@bot.slash_command()
 async def calc(interaction: Integration, expression: Expression):
     """Run a simple numerical calculation"""
     return await interaction.response.send_message(calculate_from_message(expression))
 
 
-@bot.slash_command
+@bot.slash_command()
 async def flip(interaction: Integration, number_of_flips: Flips):
     """Flip a coin x amount of times"""
     return await interaction.response.send_message(await flip_coin(number_of_flips))
 
 
-@bot.slash_command
+@bot.slash_command()
 async def flip_until(interaction: Integration, face: Face, with_thumb: WithThumb = None):
     """Keep flipping coins until a result is flipped"""
-
     return await interaction.response.send_message(flip_coin_until(face, with_thumb))
 
 
-@bot.slash_command
+@bot.slash_command()
 async def card(interaction: Integration, name: Card):
     """Search for a Magic the Gathering card (Fuzzy Matches)"""
     card_info, card_image = await search_scryfall(name)
