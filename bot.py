@@ -2,6 +2,7 @@ import io
 import os
 
 import discord
+from discord import app_commands
 
 from edge.help_message import EDGE_HELP
 from mtg.help_message import MTG_HELP
