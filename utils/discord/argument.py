@@ -1,20 +1,25 @@
-from typing import Union
+from __future__ import annotations
 
 from discord import app_commands
-from discord.app_commands.transformers import ALLOWED_DEFAULTS
-
+from discord.app_commands.transformers import ALLOWED_DEFAULTS, BUILT_IN_TRANSFORMERS
 
 ALLOWED_DEFAULTS = set(_type for tup in ALLOWED_DEFAULTS.values() for _type in tup)
 
 
-class DiscordArgument:
-    # __origin__ = Union
+class _Transformer(type):
+    def __init__(cls: DiscordArgument, name, bases, clsdict):
+        BUILT_IN_TRANSFORMERS[cls] = BUILT_IN_TRANSFORMERS[cls.annotation()]
+        super().__init__(name, bases, clsdict)
+        print(f"Initialised {cls.__name__}")
+
+
+class DiscordArgument(metaclass=_Transformer):
     choices: dict | None = None
 
     @classmethod
     def annotation(cls):
         for base in cls.__bases__:
-            if DiscordArgument is not base and base in ALLOWED_DEFAULTS:
+            if base in ALLOWED_DEFAULTS:
                 return base
         else:
             return str

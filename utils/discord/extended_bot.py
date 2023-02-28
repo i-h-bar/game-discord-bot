@@ -6,7 +6,6 @@ from discord.ext import commands
 from discord.utils import MISSING
 
 from utils.database import db
-from utils.discord.arguments import DiscordArgument
 from utils.discord.types import Integration
 
 
@@ -20,14 +19,6 @@ class Bot(commands.Bot):
     ):
         def wrapper(func: Callable[[Integration, ...], Coroutine]):
             spec = inspect.getfullargspec(func)
-            sig = inspect.signature(func)
-            params = dict(sig.parameters)
-
-            for key, value in params.items():
-                if issubclass(spec.annotations[key], DiscordArgument):
-                    params[key] = inspect.Parameter(
-                        value.name, value.kind, default=value.default, annotation=spec.annotations[key].annotation()
-                    )
 
             slash_command_args = {key: spec.annotations[key] for key in spec.args[1:]}
             func = app_commands.describe(**{arg: model.__doc__ for arg, model in slash_command_args.items()})(func)
@@ -35,7 +26,6 @@ class Bot(commands.Bot):
             choices = {arg_name: arg.formatted_choices() for arg_name, arg in slash_command_args.items() if arg.choices}
             func = app_commands.choices(**choices)(func)
 
-            func.__signature__ = sig.replace(parameters=list(params.values()))
             func = self.tree.command(
                 name=alias or func.__name__, description=inspect.getdoc(func), nsfw=nsfw, guild=guild, guilds=guilds
             )(func)
