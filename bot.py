@@ -2,18 +2,18 @@ import io
 import os
 
 import discord
-from discord import app_commands
 
 from edge.help_message import EDGE_HELP
 from mtg.help_message import MTG_HELP
-from mtg.scryfall import search_scryfall
+from mtg.scryfall import get_card
 from table_top.calculator import calculate_from_message
 from table_top.coin.flip import flip_coin_until, flip_coin
 from table_top.help_message import GENERAL_HELP
 from table_top.roller import get_roll
+from utils.aio.requests import client
 from utils.database import db
-from utils.discord.extended_bot import Bot
 from utils.discord.arguments import Game, Hide, SpellItem, Item, Spell, Dice, Expression, Flips, Face, WithThumb, Card
+from utils.discord.extended_bot import Bot
 from utils.discord.types import Integration
 from wow.data.items import item_starting_letter_groups
 from wow.data.spells import spell_starting_letter_groups
@@ -22,6 +22,7 @@ from wow.help_message import WOW_HELP
 from wow.items import item_look_up
 from wow.search import look_up
 from wow.spells import spell_look_up
+from wow.wcl.characters import search_character
 
 bot = Bot(command_prefix="/", intents=discord.Intents.all())
 
@@ -29,6 +30,7 @@ bot = Bot(command_prefix="/", intents=discord.Intents.all())
 @bot.event
 async def on_ready():
     await db.connect()
+    await client.__aenter__()
     await item_starting_letter_groups()
     await spell_starting_letter_groups()
     await object_starting_letter_groups()
@@ -118,10 +120,30 @@ async def flip_until(interaction: Integration, face: Face, with_thumb: WithThumb
 @bot.slash_command()
 async def card(interaction: Integration, name: Card):
     """Search for a Magic the Gathering card (Fuzzy Matches)"""
-    card_info, card_image = await search_scryfall(name)
+    card_info, card_image = await get_card(name)
     return await interaction.response.send_message(
         file=discord.File(io.BytesIO(card_image), f"{card_info.get('name', 'default').replace(' ', '_')}.png")
     )
+
+
+@bot.tree.context_menu(name="Warcraft Logs")
+async def wcl_user(interaction: Integration, user: discord.User):
+    message = await search_character(user)
+
+    if message:
+        await interaction.response.send_message(message, ephemeral=True)
+    else:
+        await interaction.response.send_message("Discord name does not match anything on WCLs :(", ephemeral=True)
+
+
+@bot.tree.context_menu(name="Warcraft Logs")
+async def wcl_message(interaction: Integration, message: discord.Message):
+    message = await search_character(message.author)
+
+    if message:
+        await interaction.response.send_message(message, ephemeral=True)
+    else:
+        await interaction.response.send_message("Discord name does not match anything on WCLs :(", ephemeral=True)
 
 
 def run():

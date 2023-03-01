@@ -3,13 +3,13 @@ from __future__ import annotations
 from discord import app_commands
 from discord.app_commands.transformers import ALLOWED_DEFAULTS, BUILT_IN_TRANSFORMERS
 
-ALLOWED_DEFAULTS = set(_type for tup in ALLOWED_DEFAULTS.values() for _type in tup)
+ALLOWED_DEFAULTS_SET = set(_type for tup in ALLOWED_DEFAULTS.values() for _type in tup)
 
 
 class _Transformer(type):
     def __init__(cls: DiscordArgument, name, bases, clsdict):
         for base in bases:
-            if base in ALLOWED_DEFAULTS:
+            if base in ALLOWED_DEFAULTS_SET:
                 break
         else:
             base = str

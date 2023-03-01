@@ -6,6 +6,7 @@ from discord.abc import Snowflake
 from discord.ext import commands
 from discord.utils import MISSING
 
+from utils.aio.requests import client
 from utils.database import db
 from utils.discord.argument import DiscordArgument
 from utils.discord.types import Integration
@@ -50,5 +51,6 @@ class Bot(commands.Bot):
 
     async def close(self):
         await db.close()
+        await client.__aexit__()
         await super().close()
         print("Bot Closed Down")
