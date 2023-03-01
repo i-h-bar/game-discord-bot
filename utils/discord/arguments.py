@@ -52,3 +52,7 @@ class WithThumb(DiscordArgument,  int):
 
 class Card(DiscordArgument, str):
     """Card name to search"""
+
+
+class WCLName(DiscordArgument, str):
+    """Name of user you want to search for on WCLs"""
