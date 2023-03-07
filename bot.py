@@ -164,6 +164,11 @@ async def servers(ctx):
     await ctx.send(f"{len(bot.guilds)}")
 
 
+@bot.command(name="members")
+async def members(ctx):
+    await ctx.send(f"{len(tuple(bot.get_all_members()))}")
+
+
 def run():
     bot.run(os.getenv("game_bot_token"))
 
