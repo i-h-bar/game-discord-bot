@@ -9,7 +9,8 @@ from discord.utils import MISSING
 from utils.aio.requests import client
 from utils.database import db
 from utils.discord.argument import DiscordArgument
-from utils.discord.types import Integration
+from utils.discord.logging import usage_logger
+from utils.discord.types import Interaction
 
 
 class Bot(commands.Bot):
@@ -22,7 +23,7 @@ class Bot(commands.Bot):
             auto_locale_strings: bool = True,
             extras: dict[Any, Any] = MISSING,
     ):
-        def wrapper(func: Callable[[Integration, ...], Coroutine]):
+        def wrapper(func: Callable[[Interaction, ...], Coroutine]):
             spec = inspect.getfullargspec(func)
             command_params = {
                 key: spec.annotations[key] for key in spec.args[1:]
@@ -36,6 +37,8 @@ class Bot(commands.Bot):
             func = app_commands.rename(
                 **{name: arg.name for name, arg in command_params.items() if arg.name}
             )(func)
+
+            func = usage_logger(func)
 
             return self.tree.command(
                 name=alias or func.__name__,

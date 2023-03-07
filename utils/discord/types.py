@@ -1,5 +1,5 @@
 import discord
 
 
-class Integration(discord.Integration):
+class Interaction(discord.Integration):
     response: discord.InteractionResponse
