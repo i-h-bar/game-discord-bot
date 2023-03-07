@@ -159,6 +159,13 @@ async def wcl_message(interaction: Integration, message: discord.Message):
         await interaction.response.send_message("Discord name does not match anything on WCLs :(", ephemeral=True)
 
 
+@bot.command(name="server_breakdown")
+async def server_breakdown(ctx):
+    if bot.application.owner == ctx.author:
+        breakdown = tuple((guild.name, len(guild.members)) for guild in bot.guilds)
+        await ctx.send("\n".join(f"{name}: {size}" for name, size in breakdown))
+
+
 @bot.command(name="servers")
 async def servers(ctx):
     if bot.application.owner == ctx.author:
