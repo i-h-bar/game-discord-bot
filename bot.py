@@ -161,12 +161,14 @@ async def wcl_message(interaction: Integration, message: discord.Message):
 
 @bot.command(name="servers")
 async def servers(ctx):
-    await ctx.send(f"{len(bot.guilds)}")
+    if bot.application.owner == ctx.author:
+        await ctx.send(f"{len(bot.guilds)}")
 
 
 @bot.command(name="members")
 async def members(ctx):
-    await ctx.send(f"{len(tuple(bot.get_all_members()))}")
+    if bot.application.owner == ctx.author:
+        await ctx.send(f"{len(tuple(bot.get_all_members()))}")
 
 
 def run():
