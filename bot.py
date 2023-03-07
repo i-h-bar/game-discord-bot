@@ -12,10 +12,12 @@ from table_top.help_message import GENERAL_HELP
 from table_top.roller import get_roll
 from utils.aio.requests import client
 from utils.database import db
-from utils.discord.arguments import Game, Hide, SpellItem, Item, Spell, Dice, Expression, Flips, Face, WithThumb, Card, \
-    WCLName
+from utils.discord.arguments import (
+    Game, Hide, SpellItem, Item, Spell, Dice, Expression, Flips, Face, WithThumb, Card, WCLName
+)
 from utils.discord.extended_bot import Bot
-from utils.discord.types import Integration
+from utils.discord.logging import usage_logger
+from utils.discord.types import Interaction
 from wow.data.items import item_starting_letter_groups
 from wow.data.spells import spell_starting_letter_groups
 from wow.data.spells_and_items import object_starting_letter_groups
@@ -44,7 +46,7 @@ async def on_ready():
 
 
 @bot.slash_command(alias="help")
-async def help_function(interaction: Integration, game: Game):
+async def help_function(interaction: Interaction, game: Game):
     """Get help with using the bot for a particular game."""
     if game == "wow":
         help_msg = WOW_HELP
@@ -59,7 +61,7 @@ async def help_function(interaction: Integration, game: Game):
 
 
 @bot.slash_command()
-async def search(interaction: Integration, name: SpellItem, hide: Hide = None):
+async def search(interaction: Interaction, name: SpellItem, hide: Hide = None):
     """Search from an Item or Spell in Wrath of the Lich King Classic (Fuzzy Matches)"""
     tooltip, url, name = await look_up(name)
 
@@ -71,7 +73,7 @@ async def search(interaction: Integration, name: SpellItem, hide: Hide = None):
 
 
 @bot.slash_command()
-async def item(interaction: Integration, item_name: Item, hide: Hide = None):
+async def item(interaction: Interaction, item_name: Item, hide: Hide = None):
     """Search for an item in Wrath of the Lich King Classic (Fuzzy Matches)"""
     tooltip, url, name = await item_look_up(item_name)
 
@@ -83,7 +85,7 @@ async def item(interaction: Integration, item_name: Item, hide: Hide = None):
 
 
 @bot.slash_command()
-async def spell(interaction: Integration, spell_name: Spell, hide: Hide = None):
+async def spell(interaction: Interaction, spell_name: Spell, hide: Hide = None):
     """Search for a spell in Wrath of the Lich King Classic (Fuzzy Matches)"""
     tooltip, url, name = await spell_look_up(spell_name)
 
@@ -95,31 +97,31 @@ async def spell(interaction: Integration, spell_name: Spell, hide: Hide = None):
 
 
 @bot.slash_command()
-async def roll(interaction: Integration, dice: Dice, hide: Hide = None):
+async def roll(interaction: Interaction, dice: Dice, hide: Hide = None):
     """Roll any number/size of numerical or SW:EotE dice."""
     await interaction.response.send_message(get_roll(dice), ephemeral=bool(hide))
 
 
 @bot.slash_command()
-async def calc(interaction: Integration, expression: Expression):
+async def calc(interaction: Interaction, expression: Expression):
     """Run a simple numerical calculation"""
     return await interaction.response.send_message(calculate_from_message(expression))
 
 
 @bot.slash_command()
-async def flip(interaction: Integration, number_of_flips: Flips):
+async def flip(interaction: Interaction, number_of_flips: Flips):
     """Flip a coin x amount of times"""
     return await interaction.response.send_message(await flip_coin(number_of_flips))
 
 
 @bot.slash_command()
-async def flip_until(interaction: Integration, face: Face, with_thumb: WithThumb = None):
+async def flip_until(interaction: Interaction, face: Face, with_thumb: WithThumb = None):
     """Keep flipping coins until a result is flipped"""
     return await interaction.response.send_message(flip_coin_until(face, with_thumb))
 
 
 @bot.slash_command()
-async def card(interaction: Integration, name: Card):
+async def card(interaction: Interaction, name: Card):
     """Search for a Magic the Gathering card (Fuzzy Matches)"""
     card_info, card_image = await get_card(name)
     return await interaction.response.send_message(
@@ -128,7 +130,7 @@ async def card(interaction: Integration, name: Card):
 
 
 @bot.slash_command()
-async def wcl(interaction: Integration, name: WCLName, hide: Hide = None):
+async def wcl(interaction: Interaction, name: WCLName, hide: Hide = None):
     """Search for a user on Classic Warcraft Logs"""
 
     message = await search_character(name)
@@ -140,7 +142,8 @@ async def wcl(interaction: Integration, name: WCLName, hide: Hide = None):
 
 
 @bot.tree.context_menu(name="Warcraft Logs")
-async def wcl_user(interaction: Integration, user: discord.User):
+@usage_logger
+async def wcl_user(interaction: Interaction, user: discord.User):
     message = await search_characters(user)
 
     if message:
@@ -150,7 +153,8 @@ async def wcl_user(interaction: Integration, user: discord.User):
 
 
 @bot.tree.context_menu(name="Warcraft Logs")
-async def wcl_message(interaction: Integration, message: discord.Message):
+@usage_logger
+async def wcl_message(interaction: Interaction, message: discord.Message):
     message = await search_characters(message.author)
 
     if message:
@@ -160,6 +164,7 @@ async def wcl_message(interaction: Integration, message: discord.Message):
 
 
 @bot.command(name="server_breakdown")
+@usage_logger
 async def server_breakdown(ctx):
     if bot.application.owner == ctx.author:
         breakdown = tuple((guild.name, len(guild.members)) for guild in bot.guilds)
@@ -167,12 +172,14 @@ async def server_breakdown(ctx):
 
 
 @bot.command(name="servers")
+@usage_logger
 async def servers(ctx):
     if bot.application.owner == ctx.author:
         await ctx.send(f"{len(bot.guilds)}")
 
 
 @bot.command(name="members")
+@usage_logger
 async def members(ctx):
     if bot.application.owner == ctx.author:
         await ctx.send(f"{len(tuple(bot.get_all_members()))}")
