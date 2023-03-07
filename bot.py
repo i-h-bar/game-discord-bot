@@ -159,6 +159,11 @@ async def wcl_message(interaction: Integration, message: discord.Message):
         await interaction.response.send_message("Discord name does not match anything on WCLs :(", ephemeral=True)
 
 
+@bot.command(name="servers")
+async def servers(ctx):
+    await ctx.send(f"{len(bot.guilds)}")
+
+
 def run():
     bot.run(os.getenv("game_bot_token"))
 
