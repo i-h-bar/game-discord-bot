@@ -2,14 +2,6 @@
 
 A discord bot to help the playing of games over Discord
 
-NOTE: This is a work in progress so any issues encounter please raise them; and I will fix them
-
-## Invite Game Bot to your Discord server:
-
-https://discord.com/api/oauth2/authorize?client_id=798650871403249694&permissions=522304&scope=bot
-
-Invite as Admin: https://discord.com/api/oauth2/authorize?client_id=798650871403249694&permissions=8&scope=bot
-
 ## Using Game Bot
 
 ### Rolling
